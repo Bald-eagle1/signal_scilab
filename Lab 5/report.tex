@@ -3,7 +3,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T5]{fontenc}
 \usepackage[vietnamese,english]{babel}
-\usetikzlibrary{calc}
+\usetikzlibrary{calc,patterns}
 
 % ---------------------------------------------------------------
 % Helper macros
@@ -49,27 +49,70 @@ The report is structured in two major sections:
     \item \textbf{Part II: Additional Exercises (Reference Document -- Proakis \& Manolakis, Ch.~3):} Examines $\mathcal{Z}$-transform derivations with detailed Region of Convergence (ROC) specifications, accumulation and self-convolution properties, rational inverse $\mathcal{Z}$-transforms for causal systems (including pole-zero pattern reconstruction), and parametric pole-zero modeling of damped sinusoidal sequences.
 \end{enumerate}
 
+\tableofcontents
+
+\newpage
+
+% =========================================================================
+% REFERENCE TABLES
+% =========================================================================
+\section*{Reference Tables}
+
 \begin{table}[H]
-    \centering
-    \caption{Structure and Content of the Lab 5 Report}
-    \begin{tabular}{|l|p{9.2cm}|c|}
-        \hline
-        \rowcolor{headergray}\textbf{Exercise} & \textbf{Topic / Focus} & \textbf{Status} \\ \hline
-        Exercise 1 & Impulse response $h(n)$ via $\mathcal{Z}$-transform of $y(n)-y(n-2)=x(n)$ & Reserved Space \\ \hline
-        Exercise 2 & Time-domain convolution via $\mathcal{Z}$ and $\mathcal{Z}^{-1}$ transforms & \textbf{Completed} \\ \hline
-        Exercise 3 & Inverse $\mathcal{Z}$-transform for all admissible ROCs & Reserved Space \\ \hline
-        Exercise 4 & First-order LTI system block diagram, $h(n)$, and step response & \textbf{Completed} \\ \hline
-        Exercise 5 & Second-order LTI system with initial conditions ($y_{zi}$ and $y_{zs}$) & Reserved Space \\ \hline
-        Exercise 6 & Formal proofs of $\mathcal{Z}$-transform mathematical properties & \textbf{Completed} \\ \hline
-        Problem 3.3 & $\mathcal{Z}$-transform and ROC sketches for piecewise signals & Reserved Space \\ \hline
-        Problem 3.4 & $\mathcal{Z}$-transform derivations for power-weighted \& modulated sequences & \textbf{Completed} \\ \hline
-        Problem 3.7 & Convolution via $\mathcal{Z}$-transform of mixed bilateral signals & Reserved Space \\ \hline
-        Problem 3.8 & Accumulation and discrete self-convolution properties & \textbf{Completed} \\ \hline
-        Problem 3.13 & Multi-rate $\mathcal{Z}$-transform relations (upsampling and downsampling) & Reserved Space \\ \hline
-        Problem 3.14 & Causal inverse $\mathcal{Z}$-transforms for rational transfer functions (a--j) & \textbf{Completed} \\ \hline
-        Problem 3.19 & Inverse $\mathcal{Z}$-transform of logarithmic functions via differentiation & Reserved Space \\ \hline
-        Problem 3.20 & Pole-zero analysis and synthesis of damped sinusoidal sequence & \textbf{Completed} \\ \hline
-    \end{tabular}
+\centering
+\caption{Properties of the $z$-Transform}
+\label{tab:z_properties}
+{\small
+\setlength{\tabcolsep}{5pt}
+\renewcommand{\arraystretch}{1.35}
+\begin{tabular}{>{\raggedright\arraybackslash}p{3.0cm}>{\raggedright\arraybackslash}p{3.4cm}>{\raggedright\arraybackslash}p{4.5cm}>{\raggedright\arraybackslash}p{4.3cm}}
+\hline
+\textbf{Property} & \textbf{Time Domain} & \textbf{$z$-Domain} & \textbf{ROC} \\
+\hline
+Notation & $x(n)$ & $X(z)$ & $\text{ROC}: r_2 < |z| < r_1$ \\
+ & $x_1(n)$ & $X_1(z)$ & $\text{ROC}_1$ \\
+ & $x_2(n)$ & $X_2(z)$ & $\text{ROC}_2$ \\
+Linearity & $a_1 x_1(n) + a_2 x_2(n)$ & $a_1 X_1(z) + a_2 X_2(z)$ & At least the intersection of $\text{ROC}_1$ and $\text{ROC}_2$ \\
+Time shifting & $x(n - k)$ & $z^{-k}X(z)$ & That of $X(z)$, except $z = 0$ if $k > 0$ and $z = \infty$ if $k < 0$ \\
+Scaling in the $z$-domain & $a^n x(n)$ & $X(a^{-1}z)$ & $|a|r_2 < |z| < |a|r_1$ \\
+Time reversal & $x(-n)$ & $X(z^{-1})$ & $\frac{1}{r_1} < |z| < \frac{1}{r_2}$ \\[3pt]
+Conjugation & $x^*(n)$ & $X^*(z^*)$ & $\text{ROC}$ \\
+Real part & $\text{Re}\{x(n)\}$ & $\frac{1}{2}\left[X(z) + X^*(z^*)\right]$ & Includes $\text{ROC}$ \\[2pt]
+Imaginary part & $\text{Im}\{x(n)\}$ & $\frac{1}{2j}\left[X(z) - X^*(z^*)\right]$ & Includes $\text{ROC}$ \\[3pt]
+Differentiation in the $z$-domain & $nx(n)$ & $-z\frac{dX(z)}{dz}$ & $r_2 < |z| < r_1$ \\[3pt]
+Convolution & $x_1(n) * x_2(n)$ & $X_1(z)X_2(z)$ & At least, the intersection of $\text{ROC}_1$ and $\text{ROC}_2$ \\
+Correlation & $r_{x_1 x_2}(l) = x_1(l) * x_2(-l)$ & $R_{x_1 x_2}(z) = X_1(z)X_2(z^{-1})$ & At least, the intersection of $\text{ROC}$ of $X_1(z)$ and $X_2(z^{-1})$ \\
+Initial value theorem & If $x(n)$ causal & $x(0) = \lim_{z \to \infty} X(z)$ & \\[2pt]
+Multiplication & $x_1(n)x_2(n)$ & $\frac{1}{2\pi j}\oint_C X_1(v)X_2\left(\frac{z}{v}\right)v^{-1}dv$ & At least, $r_{1l}r_{2l} < |z| < r_{1u}r_{2u}$ \\[4pt]
+Parseval's relation & \multicolumn{2}{l}{$\displaystyle\sum_{n=-\infty}^{\infty} x_1(n)x_2^*(n) = \frac{1}{2\pi j}\oint_C X_1(v)X_2^*(1/v^*)v^{-1}dv$} & \\[6pt]
+\hline
+\end{tabular}
+}
+\end{table}
+
+\newpage
+
+\begin{table}[H]
+\centering
+\caption{Some Common $z$-Transform Pairs}
+\label{tab:z_pairs}
+\renewcommand{\arraystretch}{1.3}
+\begin{tabular}{cccc}
+\hline
+\rule[-1.5ex]{0pt}{4.2ex}\textbf{\#} & \textbf{Signal, $x(n)$} & \textbf{$z$-Transform, $X(z)$} & \textbf{ROC} \\
+\hline
+\rule[-1.8ex]{0pt}{4.5ex}1 & $\delta(n)$ & $1$ & All $z$ \\
+\rule[-3.2ex]{0pt}{7.0ex}2 & $u(n)$ & $\dfrac{1}{1 - z^{-1}}$ & $|z| > 1$ \\
+\rule[-3.2ex]{0pt}{7.0ex}3 & $a^n u(n)$ & $\dfrac{1}{1 - az^{-1}}$ & $|z| > |a|$ \\
+\rule[-3.2ex]{0pt}{7.0ex}4 & $na^n u(n)$ & $\dfrac{az^{-1}}{(1 - az^{-1})^2}$ & $|z| > |a|$ \\
+\rule[-3.2ex]{0pt}{7.0ex}5 & $-a^n u(-n - 1)$ & $\dfrac{1}{1 - az^{-1}}$ & $|z| < |a|$ \\
+\rule[-3.2ex]{0pt}{7.0ex}6 & $-na^n u(-n - 1)$ & $\dfrac{az^{-1}}{(1 - az^{-1})^2}$ & $|z| < |a|$ \\
+\rule[-3.2ex]{0pt}{7.0ex}7 & $(\cos\omega_0 n)u(n)$ & $\dfrac{1 - z^{-1}\cos\omega_0}{1 - 2z^{-1}\cos\omega_0 + z^{-2}}$ & $|z| > 1$ \\
+\rule[-3.2ex]{0pt}{7.0ex}8 & $(\sin\omega_0 n)u(n)$ & $\dfrac{z^{-1}\sin\omega_0}{1 - 2z^{-1}\cos\omega_0 + z^{-2}}$ & $|z| > 1$ \\
+\rule[-3.2ex]{0pt}{7.0ex}9 & $(a^n \cos\omega_0 n)u(n)$ & $\dfrac{1 - az^{-1}\cos\omega_0}{1 - 2az^{-1}\cos\omega_0 + a^2 z^{-2}}$ & $|z| > |a|$ \\
+\rule[-3.2ex]{0pt}{7.0ex}10 & $(a^n \sin\omega_0 n)u(n)$ & $\dfrac{az^{-1}\sin\omega_0}{1 - 2az^{-1}\cos\omega_0 + a^2 z^{-2}}$ & $|z| > |a|$ \\
+\hline
+\end{tabular}
 \end{table}
 
 \newpage
@@ -89,11 +132,46 @@ The report is structured in two major sections:
     \label{eq:ex1_diff}
 \end{equation}
 
-\writespace[6cm]{%
-  \textbf{Reserved Workspace for Exercise 1:}\\[2mm]
-  Apply $\mathcal{Z}$-transform to Eq.~\eqref{eq:ex1_diff} to obtain $Y(z)(1 - z^{-2}) = X(z)$,\\
-  formulate transfer function $H(z) = \frac{1}{1 - z^{-2}} = \frac{1}{(1 - z^{-1})(1 + z^{-1})}$,\\
-  and determine $h(n) = \mathcal{Z}^{-1}\{H(z)\}$ under the causality assumption ($|z| > 1$).}
+\textbf{Solution:}
+Take the $z$-transform of both sides of the difference equation using the linearity and time-shifting properties from Table~\ref{tab:z_properties}:
+\[
+Y(z) - z^{-2}Y(z) = X(z)
+\]
+Factor out $Y(z)$ on the left side:
+\[
+Y(z)(1 - z^{-2}) = X(z)
+\]
+The system function $H(z)$ is the ratio of $Y(z)$ to $X(z)$:
+\[
+H(z) = \frac{Y(z)}{X(z)} = \frac{1}{1 - z^{-2}}
+\]
+To invert $H(z)$ by partial-fraction expansion, multiply the numerator and denominator by $z^2$ to eliminate negative powers of $z$:
+\[
+H(z) = \frac{z^2}{z^2 - 1} = \frac{z^2}{(z - 1)(z + 1)}
+\]
+Divide both sides by $z$:
+\[
+\frac{H(z)}{z} = \frac{z}{(z - 1)(z + 1)} = \frac{A_1}{z - 1} + \frac{A_2}{z + 1}
+\]
+Find the coefficients $A_1$ and $A_2$:
+\[
+A_1 = \left. \frac{(z - 1)H(z)}{z} \right|_{z = 1} = \left. \frac{z}{z + 1} \right|_{z = 1} = \frac{1}{2}
+\]
+\[
+A_2 = \left. \frac{(z + 1)H(z)}{z} \right|_{z = -1} = \left. \frac{z}{z - 1} \right|_{z = -1} = \frac{-1}{-2} = \frac{1}{2}
+\]
+Multiply both sides by $z$ and rewrite the expression in powers of $z^{-1}$:
+\[
+H(z) = \frac{1}{2}\frac{1}{1 - z^{-1}} + \frac{1}{2}\frac{1}{1 - (-1)z^{-1}}
+\]
+The poles of $H(z)$ are $p_1 = 1$ and $p_2 = -1$, which both have magnitude $1$. For a causal system, the region of convergence (ROC) is $|z| > 1$, and Table~\ref{tab:z_pairs} gives the causal impulse response:
+\[
+h(n) = \frac{1}{2}u(n) + \frac{1}{2}(-1)^n u(n) = \frac{1}{2}\left[1 + (-1)^n\right]u(n)
+\]
+If the system is anticausal with ROC $|z| < 1$, the impulse response is:
+\[
+h(n) = -\frac{1}{2}\left[1 + (-1)^n\right]u(-n - 1)
+\]
 
 % -------------------------------------------------------------------------
 % Exercise 2
@@ -106,7 +184,7 @@ The report is structured in two major sections:
     \item $x_1(n) = n u(n)$ \quad and \quad $x_2(n) = 2^n u(n-1)$
 \end{enumerate}
 
-\subsubsection{Solution to Part (a)}
+\subsubsection*{a)}
 The input signals are finite-duration causal sequences:
 \begin{align*}
     x_1(n) &= \delta(n) + 2\delta(n-1) + 3\delta(n-2) + 4\delta(n-3) + 5\delta(n-4), \\
@@ -142,7 +220,7 @@ Taking the inverse $\mathcal{Z}$-transform by inspecting polynomial coefficients
     y(n) = \{\org{1}, 3, 6, 9, 12, 9, 5\}.
 \end{equation}
 
-\subsubsection{Solution to Part (b)}
+\subsubsection*{b)}
 Given the infinite-duration right-sided exponential sequences:
 \begin{align*}
     x_1(n) &= \left(\frac{1}{5}\right)^n u(n) \implies X_1(z) = \frac{1}{1 - \frac{1}{5}z^{-1}}, \quad \text{ROC}_1: |z| > \frac{1}{5}, \\
@@ -172,7 +250,7 @@ Because the ROC $|z| > 2$ is exterior to both poles at $z = 1/5$ and $z = 2$, bo
     y(n) = \left[ -\frac{1}{9}\left(\frac{1}{5}\right)^n + \frac{10}{9} (2^n) \right] u(n) = \frac{1}{9}\left[ 10 \cdot 2^n - \left(\frac{1}{5}\right)^n \right] u(n).
 \end{equation}
 
-\subsubsection{Solution to Part (c)}
+\subsubsection*{c)}
 The input sequences are:
 \begin{equation*}
     x_1(n) = n u(n), \qquad x_2(n) = 2^n u(n-1).
@@ -229,12 +307,142 @@ Taking the inverse $\mathcal{Z}$-transform yields:
     X_3(z) &= \frac{1 + z^{-1}}{(1 - 0.5z^{-1})^2 (1 - 0.3z^{-1})}, \quad \text{with specified ROC: } 0.3 < |z| < 0.5.
 \end{align*}
 
-\writespace[6.5cm]{%
-  \textbf{Reserved Workspace for Exercise 3:}\\[2mm]
-  Factor denominators to identify system poles ($p_1 = 1, p_2 = 1/2$ for $X_1$; $p = -2$ (double pole) for $X_2$; $p_1 = 0.5, p_2 = 0.3$ for $X_3$).\\
-  For $X_1(z)$, establish three valid ROCs ($|z| > 1$, $0.5 < |z| < 1$, $|z| < 0.5$) yielding causal, two-sided, and anti-causal sequences.\\
-  For $X_2(z)$, establish two valid ROCs ($|z| > 2$ and $|z| < 2$).\\
-  For $X_3(z)$, evaluate partial fractions and expand within the specified annular region $0.3 < |z| < 0.5$.}
+\subsubsection*{a)}
+Multiply the numerator and denominator by $z^2$ to express $X_1(z)$ in positive powers of $z$:
+\[
+X_1(z) = \frac{z^2}{2z^2 - 3z + 1}
+\]
+Divide both sides by $z$ and factor the denominator:
+\[
+\begin{aligned}
+\frac{X_1(z)}{z} &= \frac{z}{(2z - 1)(z - 1)} = \frac{z}{2(z - 0.5)(z - 1)} \\
+&= \frac{A_1}{z - 0.5} + \frac{A_2}{z - 1}
+\end{aligned}
+\]
+The poles are $p_1 = 0.5$ and $p_2 = 1$. Calculate the coefficients $A_1$ and $A_2$:
+\[
+A_1 = \left. \frac{(z - 0.5)X_1(z)}{z} \right|_{z = 0.5} = \left. \frac{z}{2(z - 1)} \right|_{z = 0.5} = \frac{0.5}{2(0.5 - 1)} = -\frac{1}{2}
+\]
+\[
+A_2 = \left. \frac{(z - 1)X_1(z)}{z} \right|_{z = 1} = \left. \frac{z}{2(z - 0.5)} \right|_{z = 1} = \frac{1}{2(1 - 0.5)} = 1
+\]
+Multiply by $z$ and write in powers of $z^{-1}$:
+\[
+X_1(z) = -\frac{1}{2}\frac{1}{1 - 0.5z^{-1}} + \frac{1}{1 - z^{-1}}
+\]
+Because the poles have magnitudes $|p_1| = 0.5$ and $|p_2| = 1$, there are three possible regions of convergence and three corresponding signals $x_1(n)$ from Table~\ref{tab:z_pairs}:
+\begin{enumerate}
+\item When the ROC is $|z| > 1$, the signal is causal:
+\[
+x_1(n) = \left[1 - \frac{1}{2}(0.5)^n\right]u(n)
+\]
+\item When the ROC is $|z| < 0.5$, the signal is anticausal:
+\[
+x_1(n) = \left[\frac{1}{2}(0.5)^n - 1\right]u(-n - 1)
+\]
+\item When the ROC is $0.5 < |z| < 1$, the signal is two-sided (the pole at $0.5$ gives a causal term and the pole at $1$ gives an anticausal term):
+\[
+x_1(n) = -\frac{1}{2}(0.5)^n u(n) - u(-n - 1)
+\]
+\end{enumerate}
+
+\subsubsection*{b)}
+Because the numerator and denominator have the same degree ($M = N = 2$), $X_2(z)$ is an improper rational function. Perform polynomial long division in reverse order to eliminate the $z^{-2}$ term in the numerator:
+\[
+1 + 2z^{-1} + z^{-2} = \frac{1}{4}(1 + 4z^{-1} + 4z^{-2}) + \left(\frac{3}{4} + z^{-1}\right)
+\]
+This separates $X_2(z)$ into a constant and a proper rational function $X_{\text{pr}}(z)$:
+\[
+X_2(z) = \frac{1}{4} + \frac{\frac{3}{4} + z^{-1}}{1 + 4z^{-1} + 4z^{-2}} = \frac{1}{4} + X_{\text{pr}}(z)
+\]
+Multiply the numerator and denominator of $X_{\text{pr}}(z)$ by $z^2$ and divide by $z$:
+\[
+\frac{X_{\text{pr}}(z)}{z} = \frac{\frac{3}{4}z + 1}{z^2 + 4z + 4} = \frac{\frac{3}{4}z + 1}{(z + 2)^2}
+\]
+This function has a double pole at $p = -2$. Write its partial-fraction expansion as:
+\[
+\frac{X_{\text{pr}}(z)}{z} = \frac{A_1}{z + 2} + \frac{A_2}{(z + 2)^2}
+\]
+Multiply both sides by $(z + 2)^2$:
+\[
+\frac{(z + 2)^2 X_{\text{pr}}(z)}{z} = \frac{3}{4}z + 1 = (z + 2)A_1 + A_2
+\]
+Evaluate at $z = -2$ to find $A_2$:
+\[
+A_2 = \left. \left(\frac{3}{4}z + 1\right) \right|_{z = -2} = -\frac{3}{2} + 1 = -\frac{1}{2}
+\]
+Differentiate with respect to $z$ and evaluate at $z = -2$ to find $A_1$:
+\[
+A_1 = \left. \frac{d}{dz}\left(\frac{3}{4}z + 1\right) \right|_{z = -2} = \frac{3}{4}
+\]
+Multiply by $z$ and rewrite $X_2(z)$ in terms of $z^{-1}$ to match the standard $z$-transform pairs in Table~\ref{tab:z_pairs}:
+\[
+\begin{aligned}
+X_2(z) &= \frac{1}{4} + \frac{3}{4}\frac{1}{1 + 2z^{-1}} - \frac{1}{2}\frac{z^{-1}}{(1 + 2z^{-1})^2} \\
+&= \frac{1}{4} + \frac{3}{4}\frac{1}{1 - (-2)z^{-1}} + \frac{1}{4}\frac{(-2)z^{-1}}{\left[1 - (-2)z^{-1}\right]^2}
+\end{aligned}
+\]
+Since the only pole is at $p = -2$ with magnitude $|p| = 2$, there are two possible regions of convergence:
+\begin{enumerate}
+\item When the ROC is $|z| > 2$, the signal is causal:
+\[
+\begin{aligned}
+x_2(n) &= \frac{1}{4}\delta(n) + \frac{3}{4}(-2)^n u(n) + \frac{1}{4}n(-2)^n u(n) \\
+&= \frac{1}{4}\delta(n) + \frac{n + 3}{4}(-2)^n u(n)
+\end{aligned}
+\]
+\item When the ROC is $|z| < 2$, the signal is anticausal for $n \neq 0$:
+\[
+\begin{aligned}
+x_2(n) &= \frac{1}{4}\delta(n) - \frac{3}{4}(-2)^n u(-n - 1) - \frac{1}{4}n(-2)^n u(-n - 1) \\
+&= \frac{1}{4}\delta(n) - \frac{n + 3}{4}(-2)^n u(-n - 1)
+\end{aligned}
+\]
+\end{enumerate}
+
+\subsubsection*{c)}
+Multiply the numerator and denominator by $z^3$ to remove negative powers of $z$:
+\[
+X_3(z) = \frac{z^2(z + 1)}{(z - 0.5)^2(z - 0.3)}
+\]
+Divide both sides by $z$:
+\[
+\frac{X_3(z)}{z} = \frac{z(z + 1)}{(z - 0.3)(z - 0.5)^2} = \frac{A_1}{z - 0.3} + \frac{A_2}{z - 0.5} + \frac{A_3}{(z - 0.5)^2}
+\]
+The transform has a simple pole at $p_1 = 0.3$ and a double pole at $p_2 = 0.5$. Find $A_1$ by multiplying by $(z - 0.3)$ and evaluating at $z = 0.3$:
+\[
+A_1 = \left. \frac{z(z + 1)}{(z - 0.5)^2} \right|_{z = 0.3} = \frac{0.3(1.3)}{(-0.2)^2} = \frac{0.39}{0.04} = \frac{39}{4} = 9.75
+\]
+Find $A_3$ by multiplying by $(z - 0.5)^2$ and evaluating at $z = 0.5$:
+\[
+A_3 = \left. \frac{z(z + 1)}{z - 0.3} \right|_{z = 0.5} = \frac{0.5(1.5)}{0.2} = \frac{0.75}{0.2} = \frac{15}{4} = 3.75
+\]
+To find $A_2$, differentiate the product
+\[
+\frac{(z - 0.5)^2 X_3(z)}{z} = \frac{z^2 + z}{z - 0.3}
+\]
+with respect to $z$ and evaluate at $z = 0.5$:
+\[
+\begin{aligned}
+A_2 &= \left. \frac{d}{dz}\left(\frac{z^2 + z}{z - 0.3}\right) \right|_{z = 0.5} = \left. \frac{(2z + 1)(z - 0.3) - (z^2 + z)}{(z - 0.3)^2} \right|_{z = 0.5} \\
+&= \left. \frac{z^2 - 0.6z - 0.3}{(z - 0.3)^2} \right|_{z = 0.5} = \frac{0.25 - 0.30 - 0.30}{(0.2)^2} = -\frac{35}{4} = -8.75
+\end{aligned}
+\]
+Multiply by $z$ and use the identity
+\[
+\frac{z^{-1}}{(1 - 0.5z^{-1})^2} = 2\frac{0.5z^{-1}}{(1 - 0.5z^{-1})^2}
+\]
+to write $X_3(z)$ in standard $z^{-1}$ terms:
+\[
+X_3(z) = \frac{39}{4}\frac{1}{1 - 0.3z^{-1}} - \frac{35}{4}\frac{1}{1 - 0.5z^{-1}} + \frac{15}{2}\frac{0.5z^{-1}}{(1 - 0.5z^{-1})^2}
+\]
+The given ROC is $0.3 < |z| < 0.5$, which is the intersection of $|z| > 0.3$ and $|z| < 0.5$. From Table~\ref{tab:z_pairs}, the pole at $0.3$ gives a causal component, and the double pole at $0.5$ gives anticausal components:
+\[
+\begin{aligned}
+x_3(n) &= \frac{39}{4}(0.3)^n u(n) + \frac{35}{4}(0.5)^n u(-n - 1) - \frac{15}{2}n(0.5)^n u(-n - 1) \\
+&= 9.75(0.3)^n u(n) + (8.75 - 7.5n)(0.5)^n u(-n - 1)
+\end{aligned}
+\]
 
 % -------------------------------------------------------------------------
 % Exercise 4
@@ -346,12 +554,196 @@ Inverting back to the time domain:
     \item Determine the zero-state response $y_{zs}(n)$ when the input is $x(n) = 2^n u(n)$.
 \end{enumerate}
 
-\writespace[7cm]{%
-  \textbf{Reserved Workspace for Exercise 5:}\\[2mm]
-  Draw direct-form II structure using two delay registers, feedforward weights $(1, 1)$, and feedback weights $(2, -3)$.\\
-  Determine $H(z) = \frac{1 + z^{-1}}{1 - 2z^{-1} + 3z^{-2}}$ and invert to obtain $h(n)$.\\
-  Apply unilateral $\mathcal{Z}^+$-transform with $y(-1)=1, y(-2)=1$ to solve for $Y_{zi}(z)$ and $y_{zi}(n)$.\\
-  Calculate $Y_{zs}(z) = H(z)X(z)$ with $X(z) = \frac{1}{1 - 2z^{-1}}$ and invert to find $y_{zs}(n)$.}
+\subsubsection*{a)}
+The difference equation specifies that the current output sample $y(n)$ is formed by summing the current input $x(n)$, the delayed input $x(n-1)$, the delayed output $y(n-1)$ scaled by $2$, and the twice-delayed output $y(n-2)$ scaled by $-3$. The direct-form block diagram is shown in Figure~\ref{fig:ex5_block_diagram}.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[>=latex', thick]
+        % Input, summing, and output nodes
+        \coordinate (input) at (0, 0);
+        \coordinate (bx) at (1.5, 0);
+        \node[circle, draw, minimum size=0.8cm, inner sep=0pt] (sum1) at (5.6, 0) {$\mathbf{+}$};
+        \node[circle, draw, minimum size=0.8cm, inner sep=0pt] (sum2) at (8.1, 0) {$\mathbf{+}$};
+        \coordinate (by) at (12.6, 0);
+        \coordinate (output) at (14.2, 0);
+
+        % Feedforward delay block
+        \node[draw, rectangle, minimum width=1.2cm, minimum height=0.9cm] (dx) at (3.1, -2.5) {$z^{-1}$};
+
+        % Feedback summing, gain, and delay blocks
+        \node[circle, draw, minimum size=0.8cm, inner sep=0pt] (sumfb) at (8.1, -2.5) {$\mathbf{+}$};
+        \node[draw, rectangle, minimum width=1.2cm, minimum height=0.9cm] (g1) at (10.2, -2.5) {$2$};
+        \node[draw, rectangle, minimum width=1.2cm, minimum height=0.9cm] (dy1) at (12.6, -1.25) {$z^{-1}$};
+        \coordinate (by1) at (12.6, -2.5);
+        \node[draw, rectangle, minimum width=1.2cm, minimum height=0.9cm] (dy2) at (12.6, -3.7) {$z^{-1}$};
+        \node[draw, rectangle, minimum width=1.2cm, minimum height=0.9cm] (g2) at (10.2, -4.9) {$-3$};
+
+        % Branch dots
+        \fill (bx) circle (2pt);
+        \fill (by) circle (2pt);
+        \fill (by1) circle (2pt);
+
+        % Forward signal path
+        \draw[->] (input) -- node[above] {$x(n)$} (bx) -- (sum1.west);
+        \draw[->] (sum1.east) -- (sum2.west);
+        \draw[->] (sum2.east) -- (by) -- node[above] {$y(n)$} (output);
+
+        % Feedforward delay path
+        \draw[->] (bx) -- (1.5, -2.5) -- (dx.west);
+        \draw[->] (dx.east) -- node[above] {$x(n-1)$} (5.6, -2.5) -- (sum1.south);
+
+        % Feedback delay chain and gain paths
+        \draw[->] (by) -- (dy1.north);
+        \draw (dy1.south) -- (by1);
+        \draw[->] (by1) -- node[above] {$y(n-1)$} (g1.east);
+        \draw[->] (g1.west) -- (sumfb.east);
+        \draw[->] (sumfb.north) -- (sum2.south);
+
+        \draw[->] (by1) -- (dy2.north);
+        \draw (dy2.south) -- (12.6, -4.9);
+        \draw[->] (12.6, -4.9) -- node[above] {$y(n-2)$} (g2.east);
+        \draw[->] (g2.west) -- (8.1, -4.9) -- (sumfb.south);
+    \end{tikzpicture}
+    \caption{Direct-form block diagram for the second-order system $y(n) = 2y(n-1) - 3y(n-2) + x(n) + x(n-1)$.}
+    \label{fig:ex5_block_diagram}
+\end{figure}
+
+\subsubsection*{b)}
+Rewrite the difference equation with all output terms on the left side:
+\[
+y(n) - 2y(n-1) + 3y(n-2) = x(n) + x(n-1)
+\]
+Take the $z$-transform of both sides for a relaxed causal system:
+\[
+Y(z)(1 - 2z^{-1} + 3z^{-2}) = X(z)(1 + z^{-1})
+\]
+Solve for the system function $H(z)$:
+\[
+H(z) = \frac{Y(z)}{X(z)} = \frac{1 + z^{-1}}{1 - 2z^{-1} + 3z^{-2}}
+\]
+The denominator has complex-conjugate poles at $p_{1,2} = 1 \pm j\sqrt{2}$. Compare the denominator $1 - 2z^{-1} + 3z^{-2}$ with the standard second-order form $1 - 2az^{-1}\cos\omega_0 + a^2 z^{-2}$ from Table~\ref{tab:z_pairs}:
+\[
+a^2 = 3 \implies a = \sqrt{3}
+\]
+\[
+\begin{aligned}
+2a\cos\omega_0 = 2 &\implies \cos\omega_0 = \frac{1}{\sqrt{3}}, \quad \sin\omega_0 = \sqrt{\frac{2}{3}} \\
+&\implies \omega_0 = \arccos\left(\frac{1}{\sqrt{3}}\right) \approx 54.74^\circ
+\end{aligned}
+\]
+This gives $a\cos\omega_0 = 1$ and $a\sin\omega_0 = \sqrt{2}$. Split the numerator $1 + z^{-1} = (1 - z^{-1}) + 2z^{-1}$ to match the cosine and sine transform pairs in Table~\ref{tab:z_pairs}:
+\[
+\begin{aligned}
+H(z) &= \frac{1 - az^{-1}\cos\omega_0}{1 - 2az^{-1}\cos\omega_0 + a^2 z^{-2}} \\
+&\quad + \sqrt{2}\frac{az^{-1}\sin\omega_0}{1 - 2az^{-1}\cos\omega_0 + a^2 z^{-2}}
+\end{aligned}
+\]
+Invert both terms using Table~\ref{tab:z_pairs} to obtain the causal impulse response:
+\[
+h(n) = (\sqrt{3})^n \left[\cos(\omega_0 n) + \sqrt{2}\sin(\omega_0 n)\right]u(n)
+\]
+Equivalently, expand $\frac{H(z)}{z}$ in partial fractions at $p_1 = 1 + j\sqrt{2} = \sqrt{3}e^{j\omega_0}$:
+\[
+A_1 = \left. \frac{z + 1}{z - p_2} \right|_{z = 1 + j\sqrt{2}} = \frac{2 + j\sqrt{2}}{j2\sqrt{2}} = \frac{1}{2} - j\frac{\sqrt{2}}{2} = \frac{\sqrt{3}}{2}e^{-j\omega_0}
+\]
+This writes $h(n)$ as a single cosine sequence:
+\[
+h(n) = (\sqrt{3})^{n+1}\cos\left[\omega_0(n - 1)\right]u(n), \quad \omega_0 \approx 54.74^\circ
+\]
+
+\subsubsection*{c)}
+Set the input $x(n) = 0$ in the difference equation:
+\[
+y_{zi}(n) - 2y_{zi}(n-1) + 3y_{zi}(n-2) = 0
+\]
+Take the one-sided $z$-transform of both sides using the time-delay shifting property:
+\[
+\begin{aligned}
+Y_{zi}^+(z) &- 2\left[z^{-1}Y_{zi}^+(z) + y(-1)\right] \\
+&+ 3\left[z^{-2}Y_{zi}^+(z) + y(-1)z^{-1} + y(-2)\right] = 0
+\end{aligned}
+\]
+Collect the $Y_{zi}^+(z)$ terms on the left side and move the initial condition terms to the right side:
+\[
+Y_{zi}^+(z)(1 - 2z^{-1} + 3z^{-2}) = 2y(-1) - 3y(-1)z^{-1} - 3y(-2)
+\]
+Substitute $y(-1) = 1$ and $y(-2) = 1$:
+\[
+Y_{zi}^+(z)(1 - 2z^{-1} + 3z^{-2}) = 2(1) - 3(1)z^{-1} - 3(1) = -1 - 3z^{-1}
+\]
+Solve for $Y_{zi}^+(z)$:
+\[
+Y_{zi}^+(z) = \frac{-1 - 3z^{-1}}{1 - 2z^{-1} + 3z^{-2}}
+\]
+Using the same parameters $a = \sqrt{3}$, $a\cos\omega_0 = 1$, and $a\sin\omega_0 = \sqrt{2}$ from Part (b), rewrite the numerator as $-1 - 3z^{-1} = -(1 - z^{-1}) - 4z^{-1}$:
+\[
+\begin{aligned}
+Y_{zi}^+(z) &= -\frac{1 - az^{-1}\cos\omega_0}{1 - 2az^{-1}\cos\omega_0 + a^2 z^{-2}} \\
+&\quad - 2\sqrt{2}\frac{az^{-1}\sin\omega_0}{1 - 2az^{-1}\cos\omega_0 + a^2 z^{-2}}
+\end{aligned}
+\]
+Invert using Table~\ref{tab:z_pairs} to obtain the zero-input response:
+\[
+y_{zi}(n) = -(\sqrt{3})^n \left[\cos(\omega_0 n) + 2\sqrt{2}\sin(\omega_0 n)\right]u(n), \quad \omega_0 \approx 54.74^\circ
+\]
+In single-cosine form, the partial-fraction coefficient at $p_1 = 1 + j\sqrt{2}$ is:
+\[
+D_1 = \left. \frac{-z - 3}{z - p_2} \right|_{z = 1 + j\sqrt{2}} = -\frac{1}{2} + j\sqrt{2} = \frac{3}{2}e^{j109.47^\circ}
+\]
+which gives:
+\[
+y_{zi}(n) = 3(\sqrt{3})^n \cos(54.74^\circ n + 109.47^\circ)u(n)
+\]
+
+\subsubsection*{d)}
+From Table~\ref{tab:z_pairs}, the $z$-transform of $x(n) = 2^n u(n)$ is:
+\[
+X(z) = \frac{1}{1 - 2z^{-1}}, \quad \text{ROC: } |z| > 2
+\]
+The $z$-transform of the zero-state response is the product $Y_{zs}(z) = H(z)X(z)$:
+\[
+Y_{zs}(z) = \frac{1 + z^{-1}}{(1 - 2z^{-1} + 3z^{-2})(1 - 2z^{-1})}
+\]
+Multiply the numerator and denominator by $z^3$ and divide both sides by $z$:
+\[
+\frac{Y_{zs}(z)}{z} = \frac{z(z + 1)}{(z - 2)(z^2 - 2z + 3)} = \frac{Q_1}{z - 2} + \frac{B_1 z + B_2}{z^2 - 2z + 3}
+\]
+Find the coefficient $Q_1$ for the pole at $z = 2$:
+\[
+Q_1 = \left. \frac{z(z + 1)}{z^2 - 2z + 3} \right|_{z = 2} = \frac{2(3)}{4 - 4 + 3} = \frac{6}{3} = 2
+\]
+Subtract $\frac{2}{z - 2}$ from $\frac{Y_{zs}(z)}{z}$ to find the remaining quadratic term:
+\[
+\begin{aligned}
+\frac{Y_{zs}(z)}{z} - \frac{2}{z - 2} &= \frac{z^2 + z - 2(z^2 - 2z + 3)}{(z - 2)(z^2 - 2z + 3)} \\
+&= \frac{-z^2 + 5z - 6}{(z - 2)(z^2 - 2z + 3)} \\
+&= \frac{-(z - 2)(z - 3)}{(z - 2)(z^2 - 2z + 3)} = \frac{-z + 3}{z^2 - 2z + 3}
+\end{aligned}
+\]
+Multiply both sides by $z$ and rewrite $Y_{zs}(z)$ in powers of $z^{-1}$:
+\[
+Y_{zs}(z) = \frac{2}{1 - 2z^{-1}} + \frac{-1 + 3z^{-1}}{1 - 2z^{-1} + 3z^{-2}}
+\]
+Split the numerator of the second fraction as $-1 + 3z^{-1} = -(1 - z^{-1}) + 2z^{-1}$ so it matches the cosine and sine transform pairs with $a = \sqrt{3}$, $a\cos\omega_0 = 1$, and $a\sin\omega_0 = \sqrt{2}$:
+\[
+\begin{aligned}
+Y_{zs}(z) &= \frac{2}{1 - 2z^{-1}} - \frac{1 - az^{-1}\cos\omega_0}{1 - 2az^{-1}\cos\omega_0 + a^2 z^{-2}} \\
+&\quad + \sqrt{2}\frac{az^{-1}\sin\omega_0}{1 - 2az^{-1}\cos\omega_0 + a^2 z^{-2}}
+\end{aligned}
+\]
+Invert term by term using Table~\ref{tab:z_pairs} to obtain the causal zero-state response:
+\[
+y_{zs}(n) = \left[2(2)^n + (\sqrt{3})^n \left(-\cos(\omega_0 n) + \sqrt{2}\sin(\omega_0 n)\right)\right]u(n)
+\]
+where $\omega_0 = \arccos(1/\sqrt{3}) \approx 54.74^\circ$. In single-cosine form, the coefficient at $p_1 = 1 + j\sqrt{2}$ is:
+\[
+A_1 = \left. \frac{-z + 3}{z - p_2} \right|_{z = 1 + j\sqrt{2}} = -\frac{1}{2} - j\frac{\sqrt{2}}{2} = -\frac{\sqrt{3}}{2}e^{j\omega_0}
+\]
+which gives:
+\[
+y_{zs}(n) = \left[2^{n+1} - (\sqrt{3})^{n+1}\cos\left(\omega_0(n + 1)\right)\right]u(n)
+\]
 
 % -------------------------------------------------------------------------
 % Exercise 6
@@ -448,11 +840,132 @@ The Region of Convergence requires $z e^{-j\omega_0} \in R_x$. Because $|z e^{-j
     \item $x_4(n) = x_1(-n)$
 \end{enumerate}
 
-\writespace[6.5cm]{%
-  \textbf{Reserved Workspace for Problem 3.3:}\\[2mm]
-  For (a), split into causal series $\sum_{n=0}^{\infty} (1/3)^n z^{-n}$ ($|z| > 1/3$) and anti-causal series $\sum_{n=-\infty}^{-1} 2^n z^{-n}$ ($|z| < 2$), yielding the annular ROC: $1/3 < |z| < 2$.\\
-  For (b), combine right-sided terms with ROC: $|z| > \max(1/3, 2) \implies |z| > 2$.\\
-  For (c) and (d), apply time-shifting ($z^4 X_1(z)$) and time-reversal ($X_1(z^{-1})$) with modified ROCs.}
+\subsubsection*{a)}
+Since $\left(\frac{1}{2}\right)^{-n} = 2^n$, express $x_1(n)$ as the sum of a causal signal and an anticausal signal:
+\[
+x_1(n) = \left(\frac{1}{3}\right)^n u(n) + 2^n u(-n - 1)
+\]
+From Table~\ref{tab:z_pairs}, the $z$-transforms of the two components are:
+\[
+\left(\frac{1}{3}\right)^n u(n) \stackrel{z}{\longleftrightarrow} \frac{1}{1 - \frac{1}{3}z^{-1}}, \quad \text{ROC: } |z| > \frac{1}{3}
+\]
+\[
+2^n u(-n - 1) \stackrel{z}{\longleftrightarrow} -\frac{1}{1 - 2z^{-1}}, \quad \text{ROC: } |z| < 2
+\]
+Combine the two transforms and take the intersection of their regions of convergence:
+\[
+X_1(z) = \frac{1}{1 - \frac{1}{3}z^{-1}} - \frac{1}{1 - 2z^{-1}} = \frac{-\frac{5}{3}z^{-1}}{\left(1 - \frac{1}{3}z^{-1}\right)(1 - 2z^{-1})}
+\]
+\[
+\text{ROC: } \frac{1}{3} < |z| < 2
+\]
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.95]
+  \fill[pattern=north east lines, pattern color=gray!70, even odd rule]
+    (0,0) circle (2.0) (0,0) circle (0.7);
+  \draw[dashed, thick] (0,0) circle (2.0);
+  \draw[dashed, thick] (0,0) circle (0.7);
+  \draw[->] (-2.8,0) -- (2.8,0) node[right] {$\text{Re}(z)$};
+  \draw[->] (0,-2.6) -- (0,2.6) node[above] {$\text{Im}(z)$};
+  \node[below right] at (0.7,0) {$\frac{1}{3}$};
+  \node[below right] at (2.0,0) {$2$};
+\end{tikzpicture}
+\caption{ROC for $X_1(z)$: $\frac{1}{3} < |z| < 2$.}
+\label{fig:p33_roc_a}
+\end{figure}
+
+\subsubsection*{b)}
+Write $x_2(n)$ using the unit step sequence:
+\[
+x_2(n) = \left(\frac{1}{3}\right)^n u(n) - 2^n u(n)
+\]
+By the linearity property in Table~\ref{tab:z_properties} and the pairs in Table~\ref{tab:z_pairs}:
+\[
+\left(\frac{1}{3}\right)^n u(n) \stackrel{z}{\longleftrightarrow} \frac{1}{1 - \frac{1}{3}z^{-1}}, \quad \text{ROC: } |z| > \frac{1}{3}
+\]
+\[
+2^n u(n) \stackrel{z}{\longleftrightarrow} \frac{1}{1 - 2z^{-1}}, \quad \text{ROC: } |z| > 2
+\]
+The overall ROC is the intersection of $|z| > \frac{1}{3}$ and $|z| > 2$, which is $|z| > 2$:
+\[
+X_2(z) = \frac{1}{1 - \frac{1}{3}z^{-1}} - \frac{1}{1 - 2z^{-1}} = \frac{-\frac{5}{3}z^{-1}}{\left(1 - \frac{1}{3}z^{-1}\right)(1 - 2z^{-1})}
+\]
+\[
+\text{ROC: } |z| > 2
+\]
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.95]
+  \fill[pattern=north east lines, pattern color=gray!70, even odd rule]
+    (-2.5,-2.3) rectangle (2.5,2.3) (0,0) circle (1.7);
+  \draw[dashed, thick] (0,0) circle (1.7);
+  \draw[dashed] (0,0) circle (0.6);
+  \draw[->] (-2.8,0) -- (2.8,0) node[right] {$\text{Re}(z)$};
+  \draw[->] (0,-2.6) -- (0,2.6) node[above] {$\text{Im}(z)$};
+  \node[below right] at (0.6,0) {$\frac{1}{3}$};
+  \node[below right] at (1.7,0) {$2$};
+\end{tikzpicture}
+\caption{ROC for $X_2(z)$: $|z| > 2$.}
+\label{fig:p33_roc_b}
+\end{figure}
+
+\subsubsection*{c)}
+Apply the time-shifting property $x_1(n - k) \stackrel{z}{\longleftrightarrow} z^{-k}X_1(z)$ from Table~\ref{tab:z_properties} with $k = -4$:
+\[
+X_3(z) = z^4 X_1(z) = \frac{-\frac{5}{3}z^3}{\left(1 - \frac{1}{3}z^{-1}\right)(1 - 2z^{-1})}
+\]
+Multiplying by $z^4$ can only remove $z = \infty$ from the ROC. Because $z = \infty$ is already outside the ring of $X_1(z)$, the ROC is unchanged:
+\[
+\text{ROC: } \frac{1}{3} < |z| < 2
+\]
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.95]
+  \fill[pattern=north east lines, pattern color=gray!70, even odd rule]
+    (0,0) circle (2.0) (0,0) circle (0.7);
+  \draw[dashed, thick] (0,0) circle (2.0);
+  \draw[dashed, thick] (0,0) circle (0.7);
+  \draw[->] (-2.8,0) -- (2.8,0) node[right] {$\text{Re}(z)$};
+  \draw[->] (0,-2.6) -- (0,2.6) node[above] {$\text{Im}(z)$};
+  \node[below right] at (0.7,0) {$\frac{1}{3}$};
+  \node[below right] at (2.0,0) {$2$};
+\end{tikzpicture}
+\caption{ROC for $X_3(z)$: $\frac{1}{3} < |z| < 2$.}
+\label{fig:p33_roc_c}
+\end{figure}
+
+\subsubsection*{d)}
+Apply the time-reversal property $x_1(-n) \stackrel{z}{\longleftrightarrow} X_1(z^{-1})$ from Table~\ref{tab:z_properties}:
+\[
+\begin{aligned}
+X_4(z) &= X_1(z^{-1}) = \frac{1}{1 - \frac{1}{3}z} - \frac{1}{1 - 2z} \\
+&= \frac{-\frac{5}{3}z}{\left(1 - \frac{1}{3}z\right)(1 - 2z)} = \frac{-\frac{5}{2}z^{-1}}{\left(1 - \frac{1}{2}z^{-1}\right)(1 - 3z^{-1})}
+\end{aligned}
+\]
+The ROC is found by replacing $z$ with $z^{-1}$ in $\frac{1}{3} < |z| < 2$, which gives $\frac{1}{3} < |z^{-1}| < 2$:
+\[
+\text{ROC: } \frac{1}{2} < |z| < 3
+\]
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[scale=0.95]
+  \fill[pattern=north east lines, pattern color=gray!70, even odd rule]
+    (0,0) circle (2.1) (0,0) circle (0.7);
+  \draw[dashed, thick] (0,0) circle (2.1);
+  \draw[dashed, thick] (0,0) circle (0.7);
+  \draw[->] (-2.8,0) -- (2.8,0) node[right] {$\text{Re}(z)$};
+  \draw[->] (0,-2.6) -- (0,2.6) node[above] {$\text{Im}(z)$};
+  \node[below right] at (0.7,0) {$\frac{1}{2}$};
+  \node[below right] at (2.1,0) {$3$};
+\end{tikzpicture}
+\caption{ROC for $X_4(z)$: $\frac{1}{2} < |z| < 3$.}
+\label{fig:p33_roc_d}
+\end{figure}
 
 % -------------------------------------------------------------------------
 % Problem 3.4
@@ -460,7 +973,7 @@ The Region of Convergence requires $z e^{-j\omega_0} \in R_x$. Because $|z e^{-j
 \subsection{Problem 3.4: Determination of Z-Transforms}
 \textbf{Problem Statement:} Determine the $\mathcal{Z}$-transform and Region of Convergence for each of the following discrete-time signals:
 
-\subsubsection{Part (a): Modulated Ramp Sequence}
+\subsubsection*{a)}
 Given signal:
 \begin{equation}
     x(n) = n(-1)^n u(n).
@@ -475,7 +988,7 @@ Using the differentiation property $\mathcal{Z}\{n v(n)\} = -z \frac{d}{dz} V(z)
          &= \frac{-z^{-1}}{(1 + z^{-1})^2} = \frac{-z}{(z + 1)^2}, \quad \text{ROC: } |z| > 1.
 \end{align}
 
-\subsubsection{Part (b): Quadratic Ramp Sequence}
+\subsubsection*{b)}
 Given signal:
 \begin{equation}
     x(n) = n^2 u(n).
@@ -494,7 +1007,7 @@ Multiplying by $-z$:
     X(z) = \frac{z^{-1} + z^{-2}}{(1 - z^{-1})^3} = \frac{z^{-1}(1 + z^{-1})}{(1 - z^{-1})^3} = \frac{z(z + 1)}{(z - 1)^3}, \quad \text{ROC: } |z| > 1.
 \end{equation}
 
-\subsubsection{Part (c): Left-Sided Power-Weighted Exponential}
+\subsubsection*{c)}
 Given signal:
 \begin{equation}
     x(n) = -n a^n u(-n-1).
@@ -509,7 +1022,7 @@ Because $x(n) = n v(n)$, we apply the differentiation property:
          &= \frac{a z^{-1}}{(1 - a z^{-1})^2} = \frac{a z}{(z - a)^2}, \quad \text{ROC: } |z| < |a|.
 \end{align}
 
-\subsubsection{Part (d): Alternating Cosine Sequence}
+\subsubsection*{d)}
 Given signal:
 \begin{equation}
     x(n) = (-1)^n \left(\cos \frac{\pi}{3} n\right) u(n).
@@ -527,7 +1040,7 @@ Applying the scaling property in the $\mathcal{Z}$-domain, $\mathcal{Z}\{a^n v(n
     X(z) = V(-z) = \frac{1 - \frac{1}{2}(-z^{-1})}{1 - (-z^{-1}) + (-z^{-1})^2} = \frac{1 + \frac{1}{2}z^{-1}}{1 + z^{-1} + z^{-2}}, \quad \text{ROC: } |z| > 1.
 \end{equation}
 
-\subsubsection{Part (e): Alternating Step Sequence}
+\subsubsection*{e)}
 Given signal:
 \begin{equation}
     x(n) = (-1)^n u(n).
@@ -537,7 +1050,7 @@ Evaluating the geometric series:
     X(z) = \sum_{n=0}^{\infty} (-1)^n z^{-n} = \sum_{n=0}^{\infty} (-z^{-1})^n = \frac{1}{1 + z^{-1}} = \frac{z}{z + 1}, \quad \text{ROC: } |z| > 1.
 \end{equation}
 
-\subsubsection{Part (f): Alternating Sample Sequence}
+\subsubsection*{f)}
 Given signal:
 \begin{equation}
     x(n) = \{\org{1}, 0, -1, 0, 1, -1, \dots\}.
@@ -567,11 +1080,48 @@ Depending on the interpretation of the trailing terms:
     x_1(n) = \begin{cases} \left(\dfrac{1}{3}\right)^n, & n \ge 0 \\ \left(\dfrac{1}{2}\right)^{-n}, & n < 0 \end{cases}, \qquad x_2(n) = \left(\frac{1}{2}\right)^n u(n).
 \end{equation}
 
-\writespace[6cm]{%
-  \textbf{Reserved Workspace for Problem 3.7:}\\[2mm]
-  $X_1(z) = \frac{1}{1 - \frac{1}{3}z^{-1}} - \frac{1}{1 - 2z^{-1}} = \frac{-\frac{5}{3}z^{-1}}{(1 - \frac{1}{3}z^{-1})(1 - 2z^{-1})}$ with ROC: $1/3 < |z| < 2$.\\
-  $X_2(z) = \frac{1}{1 - \frac{1}{2}z^{-1}}$ with ROC: $|z| > 1/2$.\\
-  Form $Y(z) = X_1(z) X_2(z)$ on overlapping annular ROC $1/2 < |z| < 2$, apply partial fractions, and invert.}
+\textbf{Solution:}
+From Problem 3.3(a), the $z$-transform of $x_1(n)$ is:
+\[
+X_1(z) = \frac{-\frac{5}{3}z^{-1}}{\left(1 - \frac{1}{3}z^{-1}\right)(1 - 2z^{-1})}, \quad \text{ROC: } \frac{1}{3} < |z| < 2
+\]
+From Table~\ref{tab:z_pairs}, the $z$-transform of $x_2(n)$ is:
+\[
+X_2(z) = \frac{1}{1 - \frac{1}{2}z^{-1}}, \quad \text{ROC: } |z| > \frac{1}{2}
+\]
+By the convolution property in Table~\ref{tab:z_properties}, $Y(z) = X_1(z)X_2(z)$:
+\[
+Y(z) = \frac{-\frac{5}{3}z^{-1}}{\left(1 - \frac{1}{3}z^{-1}\right)\left(1 - \frac{1}{2}z^{-1}\right)(1 - 2z^{-1})}
+\]
+The ROC of $Y(z)$ is the intersection of $\frac{1}{3} < |z| < 2$ and $|z| > \frac{1}{2}$:
+\[
+\text{ROC: } \frac{1}{2} < |z| < 2
+\]
+Multiply the numerator and denominator of $Y(z)$ by $z^3$ and divide both sides by $z$:
+\[
+\begin{aligned}
+\frac{Y(z)}{z} &= \frac{-\frac{5}{3}z}{\left(z - \frac{1}{3}\right)\left(z - \frac{1}{2}\right)(z - 2)} \\
+&= \frac{A_1}{z - \frac{1}{3}} + \frac{A_2}{z - \frac{1}{2}} + \frac{A_3}{z - 2}
+\end{aligned}
+\]
+Evaluate the partial-fraction coefficients at the three poles:
+\[
+A_1 = \left. \frac{-\frac{5}{3}z}{\left(z - \frac{1}{2}\right)(z - 2)} \right|_{z = 1/3} = \frac{-\frac{5}{9}}{\left(-\frac{1}{6}\right)\left(-\frac{5}{3}\right)} = -2
+\]
+\[
+A_2 = \left. \frac{-\frac{5}{3}z}{\left(z - \frac{1}{3}\right)(z - 2)} \right|_{z = 1/2} = \frac{-\frac{5}{6}}{\left(\frac{1}{6}\right)\left(-\frac{3}{2}\right)} = \frac{10}{3}
+\]
+\[
+A_3 = \left. \frac{-\frac{5}{3}z}{\left(z - \frac{1}{3}\right)\left(z - \frac{1}{2}\right)} \right|_{z = 2} = \frac{-\frac{10}{3}}{\left(\frac{5}{3}\right)\left(\frac{3}{2}\right)} = -\frac{4}{3}
+\]
+Multiply by $z$ and write $Y(z)$ in powers of $z^{-1}$:
+\[
+Y(z) = -2\frac{1}{1 - \frac{1}{3}z^{-1}} + \frac{10}{3}\frac{1}{1 - \frac{1}{2}z^{-1}} - \frac{4}{3}\frac{1}{1 - 2z^{-1}}
+\]
+Since the ROC is $\frac{1}{2} < |z| < 2$, it lies outside the poles at $\frac{1}{3}$ and $\frac{1}{2}$ (which produce causal terms) and inside the pole at $2$ (which produces an anticausal term):
+\[
+y(n) = \left[-2\left(\frac{1}{3}\right)^n + \frac{10}{3}\left(\frac{1}{2}\right)^n\right]u(n) + \frac{4}{3}(2)^n u(-n - 1)
+\]
 
 % -------------------------------------------------------------------------
 % Problem 3.8
@@ -588,7 +1138,7 @@ Depending on the interpretation of the trailing terms:
     \item Determine the $\mathcal{Z}$-transform of $x(n) = (n+1)u(n)$ using the convolution property. [Hint: Show first that $x(n) = u(n) * u(n)$.]
 \end{enumerate}
 
-\subsubsection{Solution to Part (a): Accumulation Property}
+\subsubsection*{a)}
 The accumulation operation in Eq.~\eqref{eq:p38_accum} can be written in convolution form:
 \begin{equation}
     y(n) = \sum_{k=-\infty}^{\infty} x(k) u(n - k) = x(n) * u(n).
@@ -603,7 +1153,7 @@ Since $U(z) = \mathcal{Z}\{u(n)\} = \frac{1}{1 - z^{-1}}$ with $\text{ROC}_u: |z
 \end{equation}
 The Region of Convergence is at least $\text{ROC}_x \cap \{z \in \mathbb{C} : |z| > 1\}$, with possible extension if $X(z)$ has a zero that cancels the pole at $z = 1$.
 
-\subsubsection{Solution to Part (b): Z-Transform of (n+1)u(n)}
+\subsubsection*{b)}
 \textbf{Step 1: Verification of the Hint.} Compute the direct discrete convolution of $u(n)$ with itself:
 \begin{equation}
     (u * u)(n) = \sum_{k=-\infty}^{\infty} u(k) u(n - k).
@@ -642,11 +1192,32 @@ This matches the derivative property result: $\mathcal{Z}\{(n+1)u(n)\} = \mathca
     \item $x_2(n) = x(2n)$ \quad (Downsampling / Decimation by factor 2)
 \end{enumerate}
 
-\writespace[6.5cm]{%
-  \textbf{Reserved Workspace for Problem 3.13:}\\[2mm]
-  For (a), substitute $n = 2m$ into $X_1(z) = \sum_{m=-\infty}^{\infty} x(m) z^{-2m} = X(z^2)$ with ROC: $\{z : z^2 \in R_x\}$.\\
-  For (b), express $x_2(n)$ using the modulation/sampling identity: $x_e(n) = \frac{1}{2}[x(n) + (-1)^n x(n)]$,\\
-  leading to $X_2(z) = \frac{1}{2}\left[ X(z^{1/2}) + X(-z^{1/2}) \right]$.}
+\subsubsection*{a)}
+Write the definition of the $z$-transform for $x_1(n)$:
+\[
+X_1(z) = \sum_{n=-\infty}^{\infty} x_1(n)z^{-n}
+\]
+Since $x_1(n) = 0$ for all odd $n$, substitute $n = 2k$, where $k$ runs through all integers:
+\[
+X_1(z) = \sum_{k=-\infty}^{\infty} x(k)z^{-2k} = \sum_{k=-\infty}^{\infty} x(k)\left(z^2\right)^{-k} = X\left(z^2\right)
+\]
+
+\subsubsection*{b)}
+Write the definition of the $z$-transform for $x_2(n)$:
+\[
+X_2(z) = \sum_{n=-\infty}^{\infty} x_2(n)z^{-n} = \sum_{n=-\infty}^{\infty} x(2n)z^{-n}
+\]
+Let $k = 2n$. The factor $\frac{1}{2}\left[1 + (-1)^k\right]$ equals $1$ when $k$ is even and $0$ when $k$ is odd. Using this factor, extend the summation over all integers $k$:
+\[
+X_2(z) = \sum_{k=-\infty}^{\infty} \frac{1}{2}\left[1 + (-1)^k\right]x(k)z^{-k/2}
+\]
+Separate the sum into two parts:
+\[
+\begin{aligned}
+X_2(z) &= \frac{1}{2}\sum_{k=-\infty}^{\infty} x(k)\left(z^{1/2}\right)^{-k} + \frac{1}{2}\sum_{k=-\infty}^{\infty} x(k)\left(-z^{1/2}\right)^{-k} \\
+&= \frac{1}{2}\left[X\left(z^{1/2}\right) + X\left(-z^{1/2}\right)\right]
+\end{aligned}
+\]
 
 % -------------------------------------------------------------------------
 % Problem 3.14
@@ -654,7 +1225,7 @@ This matches the derivative property result: $\mathcal{Z}\{(n+1)u(n)\} = \mathca
 \subsection{Problem 3.14: Causal Inverse Z-Transforms}
 \textbf{Problem Statement:} Determine the causal signal $x(n)$ (where the Region of Convergence is exterior to the outermost pole, i.e., $|z| > \max_k |p_k|$) for each of the following $\mathcal{Z}$-transforms:
 
-\subsubsection{Part (a): Inverse Transform of Rational Function}
+\subsubsection*{a)}
 Given:
 \begin{equation}
     X(z) = \frac{1 + 3z^{-1}}{1 + 3z^{-1} + 2z^{-2}}.
@@ -678,7 +1249,7 @@ Inverting each term for $|z| > 2$:
     x(n) = \left[ 2(-1)^n - (-2)^n \right] u(n).
 \end{equation}
 
-\subsubsection{Part (b): Inverse Transform of Resonant Quadratic}
+\subsubsection*{b)}
 Given:
 \begin{equation}
     X(z) = \frac{1}{1 - z^{-1} + \frac{1}{2}z^{-2}}.
@@ -705,7 +1276,7 @@ Using the trigonometric identity $\cos\theta + \sin\theta = \sqrt{2} \sin(\theta
     x(n) = \sqrt{2}\left(\frac{1}{\sqrt{2}}\right)^n \sin\left(\frac{\pi}{4}(n+1)\right) u(n) = \left(\frac{1}{\sqrt{2}}\right)^{n-1} \sin\left(\frac{\pi}{4}(n+1)\right) u(n).
 \end{equation}
 
-\subsubsection{Part (c): Inverse Transform of Delayed Accumulator}
+\subsubsection*{c)}
 Given:
 \begin{equation}
     X(z) = \frac{z^{-6} + z^{-7}}{1 - z^{-1}}.
@@ -719,7 +1290,7 @@ Since $\mathcal{Z}^{-1}\left\{ \frac{1}{1 - z^{-1}} \right\} = u(n)$, the time-s
     x(n) = u(n - 6) + u(n - 7).
 \end{equation}
 
-\subsubsection{Part (d): Inverse Transform of Improper Rational Function}
+\subsubsection*{d)}
 Given:
 \begin{equation}
     X(z) = \frac{1 + 2z^{-2}}{1 + z^{-2}}.
@@ -733,7 +1304,7 @@ Recall that $\frac{1}{1 + z^{-2}} = \frac{1 - \cos(\pi/2) z^{-1}}{1 - 2\cos(\pi/
     x(n) = 2\delta(n) - \cos\left(\frac{\pi}{2} n\right) u(n).
 \end{equation}
 
-\subsubsection{Part (e): Inverse Transform with Multiple Poles}
+\subsubsection*{e)}
 Given:
 \begin{equation}
     X(z) = \frac{1}{4} \frac{1 + 6z^{-1} + z^{-2}}{(1 - 2z^{-1} + 2z^{-2})(1 - 0.5z^{-1})}.
@@ -760,7 +1331,7 @@ Decomposing $-0.6 + 2.9z^{-1} = -0.6(1 - z^{-1}) + 2.3 z^{-1}$:
          &= \left[ (\sqrt{2})^n \left( -0.6 \cos\left(\frac{\pi}{4} n\right) + 2.3 \sin\left(\frac{\pi}{4} n\right) \right) + \frac{17}{20}\left(\frac{1}{2}\right)^n \right] u(n).
 \end{align}
 
-\subsubsection{Part (f): Inverse Transform of Two First-Order Poles}
+\subsubsection*{f)}
 Given:
 \begin{equation}
     X(z) = \frac{2 - 1.5z^{-1}}{1 - 1.5z^{-1} + 0.5z^{-2}}.
@@ -782,7 +1353,7 @@ Taking the causal inverse $\mathcal{Z}$-transform:
     x(n) = \left[ 1 + (0.5)^n \right] u(n).
 \end{equation}
 
-\subsubsection{Part (g): Inverse Transform of Repeated Real Pole}
+\subsubsection*{g)}
 Given:
 \begin{equation}
     X(z) = \frac{1 + 2z^{-1} + z^{-2}}{1 + 4z^{-1} + 4z^{-2}}.
@@ -797,7 +1368,7 @@ Using $\mathcal{Z}^{-1}\left\{ \frac{1}{(1 - a z^{-1})^2} \right\} = (n+1) a^n u
          &= \frac{1}{4}\delta(n) + \frac{n+3}{4}(-2)^n u(n).
 \end{align}
 
-\subsubsection{Part (h): Pole-Zero Pattern Reconstruction (Fig.~P3.14, G = 1/4)}
+\subsubsection*{h)}
 From Figure P3.14 in the reference document:
 \begin{itemize}
     \item System gain: $G = \frac{1}{4}$.
@@ -817,7 +1388,7 @@ Decomposing the second numerator as $-0.5(1 - \frac{1}{2}z^{-1}) + \frac{7}{8}(\
     x(n) = \left[ \frac{3}{4}\left(\frac{1}{2}\right)^n - \frac{1}{2}\left(\frac{1}{\sqrt{2}}\right)^n \cos\left(\frac{\pi}{4} n\right) + \frac{7}{8}\left(\frac{1}{\sqrt{2}}\right)^n \sin\left(\frac{\pi}{4} n\right) \right] u(n).
 \end{equation}
 
-\subsubsection{Part (i): First-Order All-Pass Structure}
+\subsubsection*{i)}
 Given:
 \begin{equation}
     X(z) = \frac{1 - \frac{1}{2}z^{-1}}{1 + \frac{1}{2}z^{-1}}.
@@ -831,7 +1402,7 @@ Inverting term by term:
     x(n) = -\delta(n) + 2\left(-\frac{1}{2}\right)^n u(n).
 \end{equation}
 
-\subsubsection{Part (j): General First-Order Fraction}
+\subsubsection*{j)}
 Given:
 \begin{equation}
     X(z) = \frac{1 - a z^{-1}}{z^{-1} - a}.
@@ -855,11 +1426,41 @@ For a causal sequence, the ROC is exterior to the pole at $z = 1/a$, i.e., $|z| 
     \item $X(z) = \log(1 - z^{-1}), \quad |z| > 1$
 \end{enumerate}
 
-\writespace[6cm]{%
-  \textbf{Reserved Workspace for Problem 3.19:}\\[2mm]
-  Recall the property $\mathcal{Z}\{n x(n)\} = -z \frac{d}{dz}X(z)$.\\
-  For (a), $\frac{dX}{dz} = \frac{-2}{1 - 2z} \implies -z \frac{dX}{dz} = \frac{2z}{1 - 2z}$, expand as power series for $|z| < 1/2$ and solve for $x(n)$.\\
-  For (b), $\frac{dX}{dz} = \frac{z^{-2}}{1 - z^{-1}} \implies -z \frac{dX}{dz} = -\frac{z^{-1}}{1 - z^{-1}}$, expand for $|z| > 1$ and solve for $x(n)$.}
+\subsubsection*{a)}
+Differentiate $X(z)$ with respect to $z$:
+\[
+\frac{dX(z)}{dz} = \frac{-2}{1 - 2z}
+\]
+Multiply by $-z$ and rewrite in powers of $z^{-1}$:
+\[
+-z\frac{dX(z)}{dz} = \frac{2z}{1 - 2z} = \frac{2z}{-2z\left(1 - \frac{1}{2}z^{-1}\right)} = -\frac{1}{1 - \frac{1}{2}z^{-1}}, \quad |z| < \frac{1}{2}
+\]
+By the differentiation property in the $z$-domain from Table~\ref{tab:z_properties}, $nx(n) \stackrel{z}{\longleftrightarrow} -z\frac{dX(z)}{dz}$. Using Table~\ref{tab:z_pairs} for the anticausal region $|z| < \frac{1}{2}$, invert the right-hand side:
+\[
+nx(n) = \left(\frac{1}{2}\right)^n u(-n - 1)
+\]
+(At $n = 0$, the power series expansion of $\log(1 - 2z)$ around $z = 0$ has no constant term, so $x(0) = 0$.) Divide by $n$ to obtain $x(n)$:
+\[
+x(n) = \frac{1}{n}\left(\frac{1}{2}\right)^n u(-n - 1)
+\]
+
+\subsubsection*{b)}
+Differentiate $X(z)$ with respect to $z$:
+\[
+\frac{dX(z)}{dz} = \frac{z^{-2}}{1 - z^{-1}}
+\]
+Multiply both sides by $-z$:
+\[
+-z\frac{dX(z)}{dz} = -z^{-1}\left(\frac{1}{1 - z^{-1}}\right)
+\]
+For the exterior causal region ($|z| > 1$), the inverse $z$-transform of $\frac{1}{1 - z^{-1}}$ from Table~\ref{tab:z_pairs} is $u(n)$. By the time-shifting property in Table~\ref{tab:z_properties}, multiplication by $z^{-1}$ delays the sequence by one sample, and by the differentiation property in the $z$-domain:
+\[
+nx(n) = -u(n - 1)
+\]
+Divide both sides by $n$ to obtain $x(n)$:
+\[
+x(n) = -\frac{1}{n}u(n - 1)
+\]
 
 % -------------------------------------------------------------------------
 % Problem 3.20
@@ -876,7 +1477,7 @@ For a causal sequence, the ROC is exterior to the pole at $z = 1/a$, i.e., $|z| 
     \item Compare $X_1(z)$ with $X_2(z)$. Are they identical? If not, indicate a method to derive $X_1(z)$ from the pole-zero pattern.
 \end{enumerate}
 
-\subsubsection{Solution to Part (a): Derivation and Pole-Zero Diagram}
+\subsubsection*{a)}
 Expressing the sinusoidal factor using Euler's formula:
 \begin{equation}
     x_1(n) = r^n \left( \frac{e^{j\omega_0 n} - e^{-j\omega_0 n}}{2j} \right) u(n) = \frac{1}{2j}(r e^{j\omega_0})^n u(n) - \frac{1}{2j}(r e^{-j\omega_0})^n u(n).
@@ -947,7 +1548,7 @@ The pole-zero constellation in the complex $z$-plane is shown in Figure~\ref{fig
     \label{fig:p320_pole_zero}
 \end{figure}
 
-\subsubsection{Solution to Part (b): Reconstructed Transform}
+\subsubsection*{b)}
 From the graphical pole-zero constellation, any rational function with a zero at $z=0$ and conjugate poles at $z = r e^{\pm j\omega_0}$ is constructed in monic rational form as:
 \begin{equation}
     X_2(z) = K \frac{z - 0}{(z - r e^{j\omega_0})(z - r e^{-j\omega_0})} = K \frac{z}{z^2 - 2r \cos\omega_0 z + r^2},
@@ -957,7 +1558,7 @@ where $K$ represents an arbitrary real or complex scaling constant. Assuming nor
     X_2(z) = \frac{z}{z^2 - 2r \cos\omega_0 z + r^2} = \frac{z^{-1}}{1 - 2r \cos\omega_0 z^{-1} + r^2 z^{-2}}, \quad |z| > r.
 \end{equation}
 
-\subsubsection{Solution to Part (c): Comparison and Gain Identification}
+\subsubsection*{c)}
 \begin{itemize}
     \item \textbf{Comparison:} $X_1(z)$ and $X_2(z)$ share identical pole and zero locations in the complex $z$-plane, as well as an identical Region of Convergence ($|z| > r$). However, they are \textbf{not strictly identical} algebraically because they differ by an amplitude scale factor $G$:
     \begin{equation}
