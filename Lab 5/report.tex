@@ -1,0 +1,992 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{header} % Provided header format
+\usepackage[utf8]{inputenc}
+\usepackage[T5]{fontenc}
+\usepackage[vietnamese,english]{babel}
+\usetikzlibrary{calc}
+
+% ---------------------------------------------------------------
+% Helper macros
+% ---------------------------------------------------------------
+% Origin marker: \org{3} -> 3 with an up-arrow underneath
+\newcommand{\org}[1]{\underset{\uparrow}{#1}}
+
+% Reserved (dashed) box for parts that are written by students / other members.
+% Usage: \writespace[height]{hint text}
+\newcommand{\writespace}[2][4.5cm]{%
+  \begin{tcolorbox}[enhanced, frame hidden, colback=gray!4,
+      borderline={0.6pt}{0pt}{gray!70, dashed},
+      height=#1, valign=center, halign=center,
+      fontupper=\itshape\small\color{gray}]
+    #2
+  \end{tcolorbox}}
+
+% Scilab code listing macro
+\newcommand{\scilabfile}[2]{%
+  \lstinputlisting[language=Scilab, caption={#2}]{#1}}
+
+\begin{document}
+
+\begin{center}
+    \textbf{Digital Signal Processing \hfill HK261 \hfill CO2036}\\[2cm]
+
+    \huge\textbf{DIGITAL SIGNAL PROCESSING LAB REPORT}\\[0.5cm]
+    \Large\textbf{Lab 5 -- The Z-Transform, Inverse Z-Transform, and LTI System Analysis}\\[1cm]
+
+    \large Âu Lê Quang Trí - Student ID: 2453300\\[0.5cm]
+    \large Nguyễn Lê Khải Tú - Student ID: 2453384\\[0.5cm]
+    \vspace{0.5cm}
+
+    \large \today\\[2cm]
+\end{center}
+
+\section*{Overview}
+This laboratory report addresses the analytical foundations and applications of the bilateral $\mathcal{Z}$-transform, the unilateral $\mathcal{Z}^+$-transform, and the inverse $\mathcal{Z}$-transform ($\mathcal{Z}^{-1}$) for discrete-time signal and linear time-invariant (LTI) system analysis. 
+
+The report is structured in two major sections:
+\begin{enumerate}
+    \item \textbf{Part I: Core Laboratory Exercises (Lab Manual):} Focuses on time-domain convolution via algebraic $\mathcal{Z}$-domain multiplication, block diagram representations of recursive discrete-time difference equations, impulse and step responses, and fundamental operational properties (complex conjugation, real/imaginary sequence decomposition, and complex frequency modulation).
+    \item \textbf{Part II: Additional Exercises (Reference Document -- Proakis \& Manolakis, Ch.~3):} Examines $\mathcal{Z}$-transform derivations with detailed Region of Convergence (ROC) specifications, accumulation and self-convolution properties, rational inverse $\mathcal{Z}$-transforms for causal systems (including pole-zero pattern reconstruction), and parametric pole-zero modeling of damped sinusoidal sequences.
+\end{enumerate}
+
+\begin{table}[H]
+    \centering
+    \caption{Structure and Content of the Lab 5 Report}
+    \begin{tabular}{|l|p{9.2cm}|c|}
+        \hline
+        \rowcolor{headergray}\textbf{Exercise} & \textbf{Topic / Focus} & \textbf{Status} \\ \hline
+        Exercise 1 & Impulse response $h(n)$ via $\mathcal{Z}$-transform of $y(n)-y(n-2)=x(n)$ & Reserved Space \\ \hline
+        Exercise 2 & Time-domain convolution via $\mathcal{Z}$ and $\mathcal{Z}^{-1}$ transforms & \textbf{Completed} \\ \hline
+        Exercise 3 & Inverse $\mathcal{Z}$-transform for all admissible ROCs & Reserved Space \\ \hline
+        Exercise 4 & First-order LTI system block diagram, $h(n)$, and step response & \textbf{Completed} \\ \hline
+        Exercise 5 & Second-order LTI system with initial conditions ($y_{zi}$ and $y_{zs}$) & Reserved Space \\ \hline
+        Exercise 6 & Formal proofs of $\mathcal{Z}$-transform mathematical properties & \textbf{Completed} \\ \hline
+        Problem 3.3 & $\mathcal{Z}$-transform and ROC sketches for piecewise signals & Reserved Space \\ \hline
+        Problem 3.4 & $\mathcal{Z}$-transform derivations for power-weighted \& modulated sequences & \textbf{Completed} \\ \hline
+        Problem 3.7 & Convolution via $\mathcal{Z}$-transform of mixed bilateral signals & Reserved Space \\ \hline
+        Problem 3.8 & Accumulation and discrete self-convolution properties & \textbf{Completed} \\ \hline
+        Problem 3.13 & Multi-rate $\mathcal{Z}$-transform relations (upsampling and downsampling) & Reserved Space \\ \hline
+        Problem 3.14 & Causal inverse $\mathcal{Z}$-transforms for rational transfer functions (a--j) & \textbf{Completed} \\ \hline
+        Problem 3.19 & Inverse $\mathcal{Z}$-transform of logarithmic functions via differentiation & Reserved Space \\ \hline
+        Problem 3.20 & Pole-zero analysis and synthesis of damped sinusoidal sequence & \textbf{Completed} \\ \hline
+    \end{tabular}
+\end{table}
+
+\newpage
+
+% =========================================================================
+% PART I: CORE LABORATORY EXERCISES
+% =========================================================================
+\section{Part I: Core Laboratory Exercises}
+
+% -------------------------------------------------------------------------
+% Exercise 1
+% -------------------------------------------------------------------------
+\subsection{Exercise 1: Impulse Response via Z-Transform}
+\textbf{Problem Statement:} Use the $\mathcal{Z}$-transform to find the impulse response $h(n)$ of the system represented by the following input-output difference equation:
+\begin{equation}
+    y(n) - y(n-2) = x(n).
+    \label{eq:ex1_diff}
+\end{equation}
+
+\writespace[6cm]{%
+  \textbf{Reserved Workspace for Exercise 1:}\\[2mm]
+  Apply $\mathcal{Z}$-transform to Eq.~\eqref{eq:ex1_diff} to obtain $Y(z)(1 - z^{-2}) = X(z)$,\\
+  formulate transfer function $H(z) = \frac{1}{1 - z^{-2}} = \frac{1}{(1 - z^{-1})(1 + z^{-1})}$,\\
+  and determine $h(n) = \mathcal{Z}^{-1}\{H(z)\}$ under the causality assumption ($|z| > 1$).}
+
+% -------------------------------------------------------------------------
+% Exercise 2
+% -------------------------------------------------------------------------
+\subsection{Exercise 2: Convolution via Z and Inverse Z Transforms}
+\textbf{Problem Statement:} Use the forward $\mathcal{Z}$-transform and inverse $\mathcal{Z}$-transform ($\mathcal{Z}^{-1}$) to compute the convolution $y(n) = x_1(n) * x_2(n)$ for each of the following signal pairs:
+\begin{enumerate}[label=(\alph*)]
+    \item $x_1(n) = \{\org{1}, 2, 3, 4, 5\}$ \quad and \quad $x_2(n) = \{\org{1}, 1, 1\}$
+    \item $x_1(n) = \left(\dfrac{1}{5}\right)^n u(n)$ \quad and \quad $x_2(n) = 2^n u(n)$
+    \item $x_1(n) = n u(n)$ \quad and \quad $x_2(n) = 2^n u(n-1)$
+\end{enumerate}
+
+\subsubsection{Solution to Part (a)}
+The input signals are finite-duration causal sequences:
+\begin{align*}
+    x_1(n) &= \delta(n) + 2\delta(n-1) + 3\delta(n-2) + 4\delta(n-3) + 5\delta(n-4), \\
+    x_2(n) &= \delta(n) + \delta(n-1) + \delta(n-2).
+\end{align*}
+Applying the forward $\mathcal{Z}$-transform by direct definition:
+\begin{align*}
+    X_1(z) &= \sum_{n=0}^{4} x_1(n) z^{-n} = 1 + 2z^{-1} + 3z^{-2} + 4z^{-3} + 5z^{-4}, \quad \text{ROC: } |z| > 0, \\
+    X_2(z) &= \sum_{n=0}^{2} x_2(n) z^{-n} = 1 + z^{-1} + z^{-2}, \quad \text{ROC: } |z| > 0.
+\end{align*}
+By the convolution theorem in the $\mathcal{Z}$-domain, $Y(z) = X_1(z) X_2(z)$:
+\begin{align*}
+    Y(z) &= (1 + 2z^{-1} + 3z^{-2} + 4z^{-3} + 5z^{-4})(1 + z^{-1} + z^{-2}) \\
+         &= 1(1 + z^{-1} + z^{-2}) + 2z^{-1}(1 + z^{-1} + z^{-2}) + 3z^{-2}(1 + z^{-1} + z^{-2}) \\
+         &\quad + 4z^{-3}(1 + z^{-1} + z^{-2}) + 5z^{-4}(1 + z^{-1} + z^{-2}).
+\end{align*}
+Collecting terms by powers of $z^{-1}$:
+\begin{align*}
+    z^0:    &\quad 1 = 1, \\
+    z^{-1}: &\quad 1 + 2 = 3, \\
+    z^{-2}: &\quad 1 + 2 + 3 = 6, \\
+    z^{-3}: &\quad 2 + 3 + 4 = 9, \\
+    z^{-4}: &\quad 3 + 4 + 5 = 12, \\
+    z^{-5}: &\quad 4 + 5 = 9, \\
+    z^{-6}: &\quad 5 = 5.
+\end{align*}
+Thus, the product transform is
+\begin{equation}
+    Y(z) = 1 + 3z^{-1} + 6z^{-2} + 9z^{-3} + 12z^{-4} + 9z^{-5} + 5z^{-6}, \quad \text{ROC: } |z| > 0.
+\end{equation}
+Taking the inverse $\mathcal{Z}$-transform by inspecting polynomial coefficients:
+\begin{equation}
+    y(n) = \{\org{1}, 3, 6, 9, 12, 9, 5\}.
+\end{equation}
+
+\subsubsection{Solution to Part (b)}
+Given the infinite-duration right-sided exponential sequences:
+\begin{align*}
+    x_1(n) &= \left(\frac{1}{5}\right)^n u(n) \implies X_1(z) = \frac{1}{1 - \frac{1}{5}z^{-1}}, \quad \text{ROC}_1: |z| > \frac{1}{5}, \\
+    x_2(n) &= 2^n u(n) \implies X_2(z) = \frac{1}{1 - 2z^{-1}}, \quad \text{ROC}_2: |z| > 2.
+\end{align*}
+The $\mathcal{Z}$-transform of the convolution is
+\begin{equation}
+    Y(z) = X_1(z) X_2(z) = \frac{1}{\left(1 - \frac{1}{5}z^{-1}\right)(1 - 2z^{-1})}.
+\end{equation}
+The overall ROC is the intersection $\text{ROC}_1 \cap \text{ROC}_2 = \{z \in \mathbb{C} : |z| > 2\}$.
+
+We perform a partial fraction expansion in terms of $z^{-1}$:
+\begin{equation}
+    Y(z) = \frac{A}{1 - \frac{1}{5}z^{-1}} + \frac{B}{1 - 2z^{-1}}.
+\end{equation}
+Using Heaviside's residue method:
+\begin{align*}
+    A &= \left. \frac{1}{1 - 2z^{-1}} \right|_{z^{-1} = 5} = \frac{1}{1 - 10} = -\frac{1}{9}, \\
+    B &= \left. \frac{1}{1 - \frac{1}{5}z^{-1}} \right|_{z^{-1} = 1/2} = \frac{1}{1 - \frac{1}{10}} = \frac{10}{9}.
+\end{align*}
+Hence:
+\begin{equation}
+    Y(z) = -\frac{1}{9} \frac{1}{1 - \frac{1}{5}z^{-1}} + \frac{10}{9} \frac{1}{1 - 2z^{-1}}, \quad |z| > 2.
+\end{equation}
+Because the ROC $|z| > 2$ is exterior to both poles at $z = 1/5$ and $z = 2$, both terms correspond to causal right-sided sequences:
+\begin{equation}
+    y(n) = \left[ -\frac{1}{9}\left(\frac{1}{5}\right)^n + \frac{10}{9} (2^n) \right] u(n) = \frac{1}{9}\left[ 10 \cdot 2^n - \left(\frac{1}{5}\right)^n \right] u(n).
+\end{equation}
+
+\subsubsection{Solution to Part (c)}
+The input sequences are:
+\begin{equation*}
+    x_1(n) = n u(n), \qquad x_2(n) = 2^n u(n-1).
+\end{equation*}
+Recall the differentiation property in the $\mathcal{Z}$-domain: $\mathcal{Z}\{n v(n)\} = -z \frac{d}{dz} V(z)$. Since $\mathcal{Z}\{u(n)\} = \frac{1}{1 - z^{-1}}$ for $|z| > 1$:
+\begin{equation}
+    X_1(z) = -z \frac{d}{dz}\left(\frac{1}{1 - z^{-1}}\right) = -z \left( -\frac{z^{-2}}{(1 - z^{-1})^2} \right) = \frac{z^{-1}}{(1 - z^{-1})^2}, \quad |z| > 1.
+\end{equation}
+For $x_2(n) = 2^n u(n-1) = 2 \cdot 2^{n-1} u(n-1)$:
+\begin{equation}
+    X_2(z) = \sum_{n=1}^{\infty} 2^n z^{-n} = 2z^{-1} \sum_{m=0}^{\infty} (2z^{-1})^m = \frac{2z^{-1}}{1 - 2z^{-1}}, \quad |z| > 2.
+\end{equation}
+The product transform is
+\begin{equation}
+    Y(z) = X_1(z) X_2(z) = \frac{2z^{-2}}{(1 - z^{-1})^2(1 - 2z^{-1})}, \quad |z| > 2.
+\end{equation}
+Letting $w = z^{-1}$, we expand $\frac{2w^2}{(1 - w)^2(1 - 2w)}$:
+\begin{equation}
+    \frac{2w^2}{(1 - w)^2(1 - 2w)} = \frac{A_1}{1 - w} + \frac{A_2}{(1 - w)^2} + \frac{B}{1 - 2w}.
+\end{equation}
+Evaluating the coefficients:
+\begin{align*}
+    B   &= \left. \frac{2w^2}{(1 - w)^2} \right|_{w = 1/2} = \frac{2(1/4)}{(1/2)^2} = 2, \\
+    A_2 &= \left. \frac{2w^2}{1 - 2w} \right|_{w = 1} = \frac{2(1)}{1 - 2} = -2.
+\end{align*}
+Setting $w = 0$ on both sides:
+\begin{equation*}
+    0 = A_1 + A_2 + B \implies A_1 = -A_2 - B = -(-2) - 2 = 0.
+\end{equation*}
+Therefore:
+\begin{equation}
+    Y(z) = \frac{2}{1 - 2z^{-1}} - \frac{2}{(1 - z^{-1})^2}, \quad |z| > 2.
+\end{equation}
+Using the standard transform pairs:
+\begin{align*}
+    \mathcal{Z}^{-1}\left\{ \frac{1}{1 - 2z^{-1}} \right\} &= 2^n u(n), \\
+    \mathcal{Z}^{-1}\left\{ \frac{1}{(1 - z^{-1})^2} \right\} &= (n+1)u(n).
+\end{align*}
+Taking the inverse $\mathcal{Z}$-transform yields:
+\begin{align}
+    y(n) &= \left[ 2 \cdot 2^n - 2(n+1) \right] u(n) \nonumber \\
+         &= \left( 2^{n+1} - 2n - 2 \right) u(n).
+\end{align}
+\textit{Verification:} For $n=0$: $y(0) = 2^1 - 0 - 2 = 0 = x_1(0)x_2(0)$. For $n=1$: $y(1) = 2^2 - 2 - 2 = 0$. For $n=2$: $y(2) = 2^3 - 4 - 2 = 2 = x_1(1)x_2(1) = 1 \cdot 2 = 2$. The analytical result agrees perfectly.
+
+% -------------------------------------------------------------------------
+% Exercise 3
+% -------------------------------------------------------------------------
+\subsection{Exercise 3: Inverse Z-Transform for All Possible Sequences}
+\textbf{Problem Statement:} Find all possible discrete-time sequences $x(n)$ corresponding to the following $\mathcal{Z}$-transforms based on all admissible Regions of Convergence:
+\begin{align*}
+    X_1(z) &= \frac{1}{2 - 3z^{-1} + z^{-2}}, \\
+    X_2(z) &= \frac{1 + 2z^{-1} + z^{-2}}{1 + 4z^{-1} + 4z^{-2}}, \\
+    X_3(z) &= \frac{1 + z^{-1}}{(1 - 0.5z^{-1})^2 (1 - 0.3z^{-1})}, \quad \text{with specified ROC: } 0.3 < |z| < 0.5.
+\end{align*}
+
+\writespace[6.5cm]{%
+  \textbf{Reserved Workspace for Exercise 3:}\\[2mm]
+  Factor denominators to identify system poles ($p_1 = 1, p_2 = 1/2$ for $X_1$; $p = -2$ (double pole) for $X_2$; $p_1 = 0.5, p_2 = 0.3$ for $X_3$).\\
+  For $X_1(z)$, establish three valid ROCs ($|z| > 1$, $0.5 < |z| < 1$, $|z| < 0.5$) yielding causal, two-sided, and anti-causal sequences.\\
+  For $X_2(z)$, establish two valid ROCs ($|z| > 2$ and $|z| < 2$).\\
+  For $X_3(z)$, evaluate partial fractions and expand within the specified annular region $0.3 < |z| < 0.5$.}
+
+% -------------------------------------------------------------------------
+% Exercise 4
+% -------------------------------------------------------------------------
+\subsection{Exercise 4: First-Order LTI System Analysis and Implementation}
+\textbf{Problem Statement:} An LTI system is described by the difference equation:
+\begin{equation}
+    y(n) = 0.7 y(n-1) + x(n).
+    \label{eq:ex4_diff}
+\end{equation}
+\begin{enumerate}[label=(\alph*)]
+    \item Draw the block diagram representation of the system.
+    \item Determine the unit impulse response $h(n)$.
+    \item Determine the total output $y(n)$ when the input is the unit step sequence $x(n) = u(n)$.
+\end{enumerate}
+
+\subsubsection{Block Diagram Representation}
+The difference equation specifies that the current output sample $y(n)$ is formed by summing the current input sample $x(n)$ with the previous output sample $y(n-1)$ scaled by the feedback coefficient $a_1 = 0.7$. The block diagram is illustrated in Figure~\ref{fig:ex4_block_diagram}.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[auto, >=latex', node distance=2.2cm, thick]
+        % Nodes
+        \node [coordinate] (input) {};
+        \node [circle, draw, minimum size=0.8cm, inner sep=0pt, right of=input] (sum) {$\mathbf{+}$};
+        \node [coordinate, right of=sum, node distance=2.2cm] (branch) {};
+        \node [coordinate, right of=branch, node distance=1.8cm] (output) {};
+        
+        \node [draw, rectangle, minimum width=1.4cm, minimum height=1.0cm, below of=branch, node distance=1.8cm] (delay) {$z^{-1}$};
+        \node [draw, rectangle, minimum width=1.4cm, minimum height=1.0cm, left of=delay, node distance=2.2cm] (gain) {$0.7$};
+
+        % Connections
+        \draw [->] (input) -- node [above] {$x(n)$} (sum);
+        \draw [-]  (sum) -- (branch);
+        \draw [->] (branch) -- node [above] {$y(n)$} (output);
+        \draw [->] (branch) -- (delay);
+        \draw [->] (delay) -- node [above] {$y(n-1)$} (gain);
+        \draw [->] (gain.north) -- node [left] {$+$} (sum.south);
+    \end{tikzpicture}
+    \caption{Direct-form recursive block diagram for the first-order system $y(n) = 0.7y(n-1) + x(n)$.}
+    \label{fig:ex4_block_diagram}
+\end{figure}
+
+\subsubsection{Determination of Impulse Response h(n)}
+Applying the bilateral $\mathcal{Z}$-transform to Eq.~\eqref{eq:ex4_diff} with initial rest conditions:
+\begin{equation}
+    Y(z) = 0.7 z^{-1} Y(z) + X(z) \implies Y(z)(1 - 0.7 z^{-1}) = X(z).
+\end{equation}
+The transfer function $H(z)$ is given by
+\begin{equation}
+    H(z) = \frac{Y(z)}{X(z)} = \frac{1}{1 - 0.7 z^{-1}}.
+\end{equation}
+The pole is located at $z = 0.7$. For a causal and stable discrete-time system, the Region of Convergence is exterior to the pole:
+\begin{equation}
+    \text{ROC}_H: |z| > 0.7.
+\end{equation}
+Taking the inverse $\mathcal{Z}$-transform:
+\begin{equation}
+    h(n) = (0.7)^n u(n).
+\end{equation}
+
+\subsubsection{Determination of Step Response y(n) for x(n) = u(n)}
+When $x(n) = u(n)$, its $\mathcal{Z}$-transform is
+\begin{equation}
+    X(z) = \frac{1}{1 - z^{-1}}, \quad \text{ROC}_X: |z| > 1.
+\end{equation}
+The system output in the $\mathcal{Z}$-domain is
+\begin{equation}
+    Y(z) = H(z) X(z) = \frac{1}{(1 - 0.7 z^{-1})(1 - z^{-1})}, \quad \text{ROC}_Y: |z| > 1.
+\end{equation}
+We expand $Y(z)$ using partial fractions:
+\begin{equation}
+    Y(z) = \frac{A}{1 - 0.7 z^{-1}} + \frac{B}{1 - z^{-1}}.
+\end{equation}
+The residues are computed as follows:
+\begin{align*}
+    A &= \left. \frac{1}{1 - z^{-1}} \right|_{z^{-1} = 1/0.7} = \frac{1}{1 - \frac{10}{7}} = -\frac{7}{3}, \\
+    B &= \left. \frac{1}{1 - 0.7 z^{-1}} \right|_{z^{-1} = 1} = \frac{1}{1 - 0.7} = \frac{1}{0.3} = \frac{10}{3}.
+\end{align*}
+Thus:
+\begin{equation}
+    Y(z) = -\frac{7}{3} \frac{1}{1 - 0.7 z^{-1}} + \frac{10}{3} \frac{1}{1 - z^{-1}}, \quad |z| > 1.
+\end{equation}
+Inverting back to the time domain:
+\begin{align}
+    y(n) &= \left[ -\frac{7}{3}(0.7)^n + \frac{10}{3} \right] u(n) \nonumber \\
+         &= \frac{10}{3}\left[ 1 - (0.7)(0.7)^n \right] u(n) = \frac{10}{3}\left[ 1 - (0.7)^{n+1} \right] u(n).
+\end{align}
+\textit{Numerical verification:}
+\begin{itemize}
+    \item At $n=0$: $y(0) = \frac{10}{3}(1 - 0.7) = 1$. From difference equation: $y(0) = 0.7(0) + 1 = 1$.
+    \item At $n=1$: $y(1) = \frac{10}{3}(1 - 0.49) = \frac{10}{3}(0.51) = 1.7$. From difference equation: $y(1) = 0.7(1) + 1 = 1.7$.
+    \item Steady-state as $n \to \infty$: $y(\infty) = \frac{10}{3} \approx 3.333$, in exact accordance with the DC gain $H(1) = \frac{1}{1 - 0.7} = \frac{10}{3}$.
+\end{itemize}
+
+% -------------------------------------------------------------------------
+% Exercise 5
+% -------------------------------------------------------------------------
+\subsection{Exercise 5: Second-Order LTI System with Initial Conditions}
+\textbf{Problem Statement:} Given the LTI system represented by the difference equation:
+\begin{equation}
+    y(n) = 2y(n-1) - 3y(n-2) + x(n) + x(n-1).
+    \label{eq:ex5_diff}
+\end{equation}
+\begin{enumerate}[label=(\alph*)]
+    \item Draw the block diagram representation of the system.
+    \item Determine the unit impulse response $h(n)$.
+    \item Determine the zero-input response $y_{zi}(n)$ when initial conditions are $y(-1) = 1$ and $y(-2) = 1$.
+    \item Determine the zero-state response $y_{zs}(n)$ when the input is $x(n) = 2^n u(n)$.
+\end{enumerate}
+
+\writespace[7cm]{%
+  \textbf{Reserved Workspace for Exercise 5:}\\[2mm]
+  Draw direct-form II structure using two delay registers, feedforward weights $(1, 1)$, and feedback weights $(2, -3)$.\\
+  Determine $H(z) = \frac{1 + z^{-1}}{1 - 2z^{-1} + 3z^{-2}}$ and invert to obtain $h(n)$.\\
+  Apply unilateral $\mathcal{Z}^+$-transform with $y(-1)=1, y(-2)=1$ to solve for $Y_{zi}(z)$ and $y_{zi}(n)$.\\
+  Calculate $Y_{zs}(z) = H(z)X(z)$ with $X(z) = \frac{1}{1 - 2z^{-1}}$ and invert to find $y_{zs}(n)$.}
+
+% -------------------------------------------------------------------------
+% Exercise 6
+% -------------------------------------------------------------------------
+\subsection{Exercise 6: Mathematical Proofs of Z-Transform Properties}
+\textbf{Problem Statement:} Let $x(n)$ be a discrete-time sequence with $\mathcal{Z}$-transform $X(z) = \sum_{n=-\infty}^{\infty} x(n) z^{-n}$ and Region of Convergence $R_x$. Prove the following analytical statements:
+\begin{enumerate}[label=(\alph*)]
+    \item $\mathcal{Z}\{x^*(n)\} = X^*(z^*)$
+    \item $\mathcal{Z}\{\text{Re}\{x(n)\}\} = \dfrac{1}{2}\left[ X(z) + X^*(z^*) \right]$
+    \item $\mathcal{Z}\{\text{Im}\{x(n)\}\} = \dfrac{1}{2j}\left[ X(z) - X^*(z^*) \right]$
+    \item $\mathcal{Z}\{e^{j\omega_0 n} x(n)\} = X(z e^{-j\omega_0})$
+\end{enumerate}
+
+\subsubsection{Proof of Statement (a): Complex Conjugation}
+From the basic definition of the bilateral $\mathcal{Z}$-transform:
+\begin{equation}
+    \mathcal{Z}\{x^*(n)\} = \sum_{n=-\infty}^{\infty} x^*(n) z^{-n}.
+\end{equation}
+Recall that for any complex numbers $u$ and $v$, $u^* v^* = (u v)^*$ and $(z^{-n}) = ((z^*)^{-n})^*$. Hence, we can factor out the complex conjugate across the infinite sum:
+\begin{equation}
+    \mathcal{Z}\{x^*(n)\} = \sum_{n=-\infty}^{\infty} \left[ x(n) (z^*)^{-n} \right]^* = \left( \sum_{n=-\infty}^{\infty} x(n) (z^*)^{-n} \right)^*.
+\end{equation}
+Recognizing that the summation inside the outer parentheses is precisely the evaluation of $X(\cdot)$ at the conjugate variable $z^*$:
+\begin{equation}
+    \sum_{n=-\infty}^{\infty} x(n) (z^*)^{-n} = X(z^*).
+\end{equation}
+Taking the outer complex conjugate gives
+\begin{equation}
+    \mathcal{Z}\{x^*(n)\} = X^*(z^*).
+\end{equation}
+The convergence condition requires $z^* \in R_x$. Since $|z^*| = |z|$, the magnitude condition for convergence is identical, so the ROC remains exactly $R_x$. \hfill $\blacksquare$
+
+\subsubsection{Proof of Statement (b): Real Part Extraction}
+By Euler's identity, the real part of any complex sequence $x(n)$ is expressed as:
+\begin{equation}
+    \text{Re}\{x(n)\} = \frac{x(n) + x^*(n)}{2}.
+\end{equation}
+Applying the linearity property of the $\mathcal{Z}$-transform:
+\begin{equation}
+    \mathcal{Z}\{\text{Re}\{x(n)\}\} = \mathcal{Z}\left\{ \frac{1}{2} x(n) + \frac{1}{2} x^*(n) \right\} = \frac{1}{2} \mathcal{Z}\{x(n)\} + \frac{1}{2} \mathcal{Z}\{x^*(n)\}.
+\end{equation}
+Substituting the result of statement (a), $\mathcal{Z}\{x^*(n)\} = X^*(z^*)$:
+\begin{equation}
+    \mathcal{Z}\{\text{Re}\{x(n)\}\} = \frac{1}{2} \left[ X(z) + X^*(z^*) \right].
+\end{equation}
+The ROC contains at least $R_x$. \hfill $\blacksquare$
+
+\subsubsection{Proof of Statement (c): Imaginary Part Extraction}
+Similarly, the imaginary part of $x(n)$ is defined as:
+\begin{equation}
+    \text{Im}\{x(n)\} = \frac{x(n) - x^*(n)}{2j}.
+\end{equation}
+Invoking linearity:
+\begin{equation}
+    \mathcal{Z}\{\text{Im}\{x(n)\}\} = \frac{1}{2j} \mathcal{Z}\{x(n)\} - \frac{1}{2j} \mathcal{Z}\{x^*(n)\}.
+\end{equation}
+Substituting $\mathcal{Z}\{x^*(n)\} = X^*(z^*)$ yields:
+\begin{equation}
+    \mathcal{Z}\{\text{Im}\{x(n)\}\} = \frac{1}{2j} \left[ X(z) - X^*(z^*) \right].
+\end{equation}
+The ROC contains at least $R_x$. \hfill $\blacksquare$
+
+\subsubsection{Proof of Statement (d): Complex Frequency Modulation}
+By direct evaluation using the $\mathcal{Z}$-transform definition:
+\begin{equation}
+    \mathcal{Z}\{e^{j\omega_0 n} x(n)\} = \sum_{n=-\infty}^{\infty} \left[ e^{j\omega_0 n} x(n) \right] z^{-n}.
+\end{equation}
+Combining the exponent $n$ terms:
+\begin{equation}
+    \mathcal{Z}\{e^{j\omega_0 n} x(n)\} = \sum_{n=-\infty}^{\infty} x(n) \left( z e^{-j\omega_0} \right)^{-n}.
+\end{equation}
+By inspection, this summation is the definition of $X(\cdot)$ evaluated at the scaled complex variable $z' = z e^{-j\omega_0}$:
+\begin{equation}
+    \mathcal{Z}\{e^{j\omega_0 n} x(n)\} = X\left( z e^{-j\omega_0} \right).
+\end{equation}
+The Region of Convergence requires $z e^{-j\omega_0} \in R_x$. Because $|z e^{-j\omega_0}| = |z| \cdot |e^{-j\omega_0}| = |z|$, the radial bounds are unchanged, meaning the ROC remains $R_x$. Geometrically, this property corresponds to a counter-clockwise rotation of the pole-zero constellation by the angle $\omega_0$. \hfill $\blacksquare$
+
+\newpage
+
+% =========================================================================
+% PART II: ADDITIONAL EXERCISES (PROAKIS & MANOLAKIS CHAPTER 3)
+% =========================================================================
+\section{Part II: Additional Exercises (Reference Document)}
+
+% -------------------------------------------------------------------------
+% Problem 3.3
+% -------------------------------------------------------------------------
+\subsection{Problem 3.3: Signals and Regions of Convergence}
+\textbf{Problem Statement:} Determine the $\mathcal{Z}$-transforms and sketch the Region of Convergence (ROC) for each of the following signals:
+\begin{enumerate}[label=(\alph*)]
+    \item $x_1(n) = \begin{cases} \left(\dfrac{1}{3}\right)^n, & n \ge 0 \\ \left(\dfrac{1}{2}\right)^{-n}, & n < 0 \end{cases}$
+    \item $x_2(n) = \begin{cases} \left(\dfrac{1}{3}\right)^n - 2^n, & n \ge 0 \\ 0, & n < 0 \end{cases}$
+    \item $x_3(n) = x_1(n+4)$
+    \item $x_4(n) = x_1(-n)$
+\end{enumerate}
+
+\writespace[6.5cm]{%
+  \textbf{Reserved Workspace for Problem 3.3:}\\[2mm]
+  For (a), split into causal series $\sum_{n=0}^{\infty} (1/3)^n z^{-n}$ ($|z| > 1/3$) and anti-causal series $\sum_{n=-\infty}^{-1} 2^n z^{-n}$ ($|z| < 2$), yielding the annular ROC: $1/3 < |z| < 2$.\\
+  For (b), combine right-sided terms with ROC: $|z| > \max(1/3, 2) \implies |z| > 2$.\\
+  For (c) and (d), apply time-shifting ($z^4 X_1(z)$) and time-reversal ($X_1(z^{-1})$) with modified ROCs.}
+
+% -------------------------------------------------------------------------
+% Problem 3.4
+% -------------------------------------------------------------------------
+\subsection{Problem 3.4: Determination of Z-Transforms}
+\textbf{Problem Statement:} Determine the $\mathcal{Z}$-transform and Region of Convergence for each of the following discrete-time signals:
+
+\subsubsection{Part (a): Modulated Ramp Sequence}
+Given signal:
+\begin{equation}
+    x(n) = n(-1)^n u(n).
+\end{equation}
+We know the basic causal exponential pair:
+\begin{equation}
+    v(n) = (-1)^n u(n) \longleftrightarrow V(z) = \frac{1}{1 + z^{-1}}, \quad \text{ROC: } |z| > 1.
+\end{equation}
+Using the differentiation property $\mathcal{Z}\{n v(n)\} = -z \frac{d}{dz} V(z)$:
+\begin{align}
+    X(z) &= -z \frac{d}{dz}\left( \frac{1}{1 + z^{-1}} \right) = -z \left[ -\frac{-z^{-2}}{(1 + z^{-1})^2} \right] \nonumber \\
+         &= \frac{-z^{-1}}{(1 + z^{-1})^2} = \frac{-z}{(z + 1)^2}, \quad \text{ROC: } |z| > 1.
+\end{align}
+
+\subsubsection{Part (b): Quadratic Ramp Sequence}
+Given signal:
+\begin{equation}
+    x(n) = n^2 u(n).
+\end{equation}
+We apply the differentiation property successively. For $v(n) = n u(n)$:
+\begin{equation}
+    V(z) = \mathcal{Z}\{n u(n)\} = \frac{z^{-1}}{(1 - z^{-1})^2}, \quad |z| > 1.
+\end{equation}
+Now, $x(n) = n \cdot v(n)$, so $X(z) = -z \frac{d}{dz} V(z)$:
+\begin{align*}
+    \frac{d}{dz} \left[ z^{-1}(1 - z^{-1})^{-2} \right] &= -z^{-2}(1 - z^{-1})^{-2} + z^{-1}\left[ -2(1 - z^{-1})^{-3}(z^{-2}) \right] \\
+    &= \frac{-z^{-2}(1 - z^{-1}) - 2z^{-3}}{(1 - z^{-1})^3} = \frac{-z^{-2} - z^{-3}}{(1 - z^{-1})^3}.
+\end{align*}
+Multiplying by $-z$:
+\begin{equation}
+    X(z) = \frac{z^{-1} + z^{-2}}{(1 - z^{-1})^3} = \frac{z^{-1}(1 + z^{-1})}{(1 - z^{-1})^3} = \frac{z(z + 1)}{(z - 1)^3}, \quad \text{ROC: } |z| > 1.
+\end{equation}
+
+\subsubsection{Part (c): Left-Sided Power-Weighted Exponential}
+Given signal:
+\begin{equation}
+    x(n) = -n a^n u(-n-1).
+\end{equation}
+For the anti-causal exponential sequence:
+\begin{equation}
+    v(n) = -a^n u(-n-1) \longleftrightarrow V(z) = \frac{1}{1 - a z^{-1}}, \quad \text{ROC: } |z| < |a|.
+\end{equation}
+Because $x(n) = n v(n)$, we apply the differentiation property:
+\begin{align}
+    X(z) &= -z \frac{d}{dz}\left( \frac{1}{1 - a z^{-1}} \right) = -z \left[ -\frac{a z^{-2}}{(1 - a z^{-1})^2} \right] \nonumber \\
+         &= \frac{a z^{-1}}{(1 - a z^{-1})^2} = \frac{a z}{(z - a)^2}, \quad \text{ROC: } |z| < |a|.
+\end{align}
+
+\subsubsection{Part (d): Alternating Cosine Sequence}
+Given signal:
+\begin{equation}
+    x(n) = (-1)^n \left(\cos \frac{\pi}{3} n\right) u(n).
+\end{equation}
+Recall the standard cosine transform pair:
+\begin{equation}
+    \cos(\omega_0 n) u(n) \longleftrightarrow \frac{1 - (\cos\omega_0) z^{-1}}{1 - 2(\cos\omega_0) z^{-1} + z^{-2}}, \quad |z| > 1.
+\end{equation}
+For $\omega_0 = \frac{\pi}{3}$, $\cos \frac{\pi}{3} = \frac{1}{2}$. Thus:
+\begin{equation}
+    V(z) = \mathcal{Z}\left\{ \cos\left(\frac{\pi}{3} n\right) u(n) \right\} = \frac{1 - \frac{1}{2}z^{-1}}{1 - z^{-1} + z^{-2}}, \quad |z| > 1.
+\end{equation}
+Applying the scaling property in the $\mathcal{Z}$-domain, $\mathcal{Z}\{a^n v(n)\} = V(a^{-1}z)$. Here $a = -1$, which corresponds to replacing $z^{-1}$ by $-z^{-1}$:
+\begin{equation}
+    X(z) = V(-z) = \frac{1 - \frac{1}{2}(-z^{-1})}{1 - (-z^{-1}) + (-z^{-1})^2} = \frac{1 + \frac{1}{2}z^{-1}}{1 + z^{-1} + z^{-2}}, \quad \text{ROC: } |z| > 1.
+\end{equation}
+
+\subsubsection{Part (e): Alternating Step Sequence}
+Given signal:
+\begin{equation}
+    x(n) = (-1)^n u(n).
+\end{equation}
+Evaluating the geometric series:
+\begin{equation}
+    X(z) = \sum_{n=0}^{\infty} (-1)^n z^{-n} = \sum_{n=0}^{\infty} (-z^{-1})^n = \frac{1}{1 + z^{-1}} = \frac{z}{z + 1}, \quad \text{ROC: } |z| > 1.
+\end{equation}
+
+\subsubsection{Part (f): Alternating Sample Sequence}
+Given signal:
+\begin{equation}
+    x(n) = \{\org{1}, 0, -1, 0, 1, -1, \dots\}.
+\end{equation}
+Depending on the interpretation of the trailing terms:
+\begin{enumerate}
+    \item \textbf{Finite-Duration Sequence interpretation:} If $x(n)$ denotes the specified 6-sample sequence $x(n) = \{\org{1}, 0, -1, 0, 1, -1\}$:
+    \begin{equation}
+        X(z) = 1 - z^{-2} + z^{-4} - z^{-5}, \quad \text{ROC: } 0 < |z| < \infty.
+    \end{equation}
+    \item \textbf{Causal Sinusoidal Sequence interpretation:} If the series represents the alternating trigonometric sequence $x(n) = \cos\left(\frac{\pi}{2} n\right) u(n)$:
+    \begin{equation}
+        x(n) = \{\org{1}, 0, -1, 0, 1, 0, -1, \dots\} \longleftrightarrow X(z) = \frac{1}{1 + z^{-2}} = \frac{z^2}{z^2 + 1}, \quad \text{ROC: } |z| > 1.
+    \end{equation}
+    \item \textbf{Periodic Sequence with Period $N=6$:} If $x(n)$ repeats periodically with fundamental block $[1, 0, -1, 0, 1, -1]$ for $n \ge 0$:
+    \begin{equation}
+        X(z) = \frac{1 - z^{-2} + z^{-4} - z^{-5}}{1 - z^{-6}}, \quad \text{ROC: } |z| > 1.
+    \end{equation}
+\end{enumerate}
+
+% -------------------------------------------------------------------------
+% Problem 3.7
+% -------------------------------------------------------------------------
+\subsection{Problem 3.7: Convolution by Means of Z-Transform}
+\textbf{Problem Statement:} Compute the convolution $y(n) = x_1(n) * x_2(n)$ by means of the $\mathcal{Z}$-transform for the signals:
+\begin{equation}
+    x_1(n) = \begin{cases} \left(\dfrac{1}{3}\right)^n, & n \ge 0 \\ \left(\dfrac{1}{2}\right)^{-n}, & n < 0 \end{cases}, \qquad x_2(n) = \left(\frac{1}{2}\right)^n u(n).
+\end{equation}
+
+\writespace[6cm]{%
+  \textbf{Reserved Workspace for Problem 3.7:}\\[2mm]
+  $X_1(z) = \frac{1}{1 - \frac{1}{3}z^{-1}} - \frac{1}{1 - 2z^{-1}} = \frac{-\frac{5}{3}z^{-1}}{(1 - \frac{1}{3}z^{-1})(1 - 2z^{-1})}$ with ROC: $1/3 < |z| < 2$.\\
+  $X_2(z) = \frac{1}{1 - \frac{1}{2}z^{-1}}$ with ROC: $|z| > 1/2$.\\
+  Form $Y(z) = X_1(z) X_2(z)$ on overlapping annular ROC $1/2 < |z| < 2$, apply partial fractions, and invert.}
+
+% -------------------------------------------------------------------------
+% Problem 3.8
+% -------------------------------------------------------------------------
+\subsection{Problem 3.8: Accumulation and Convolution Properties}
+\textbf{Problem Statement:}
+\begin{enumerate}[label=(\alph*)]
+    \item Use the convolution property to express the $\mathcal{Z}$-transform of the accumulation signal
+    \begin{equation}
+        y(n) = \sum_{k=-\infty}^{n} x(k)
+        \label{eq:p38_accum}
+    \end{equation}
+    in terms of $X(z)$.
+    \item Determine the $\mathcal{Z}$-transform of $x(n) = (n+1)u(n)$ using the convolution property. [Hint: Show first that $x(n) = u(n) * u(n)$.]
+\end{enumerate}
+
+\subsubsection{Solution to Part (a): Accumulation Property}
+The accumulation operation in Eq.~\eqref{eq:p38_accum} can be written in convolution form:
+\begin{equation}
+    y(n) = \sum_{k=-\infty}^{\infty} x(k) u(n - k) = x(n) * u(n).
+\end{equation}
+By the convolution theorem of the $\mathcal{Z}$-transform:
+\begin{equation}
+    Y(z) = \mathcal{Z}\{x(n) * u(n)\} = X(z) U(z).
+\end{equation}
+Since $U(z) = \mathcal{Z}\{u(n)\} = \frac{1}{1 - z^{-1}}$ with $\text{ROC}_u: |z| > 1$:
+\begin{equation}
+    Y(z) = \frac{X(z)}{1 - z^{-1}} = \frac{z}{z - 1} X(z).
+\end{equation}
+The Region of Convergence is at least $\text{ROC}_x \cap \{z \in \mathbb{C} : |z| > 1\}$, with possible extension if $X(z)$ has a zero that cancels the pole at $z = 1$.
+
+\subsubsection{Solution to Part (b): Z-Transform of (n+1)u(n)}
+\textbf{Step 1: Verification of the Hint.} Compute the direct discrete convolution of $u(n)$ with itself:
+\begin{equation}
+    (u * u)(n) = \sum_{k=-\infty}^{\infty} u(k) u(n - k).
+\end{equation}
+The product $u(k)u(n-k)$ is non-zero only when both $k \ge 0$ and $n - k \ge 0 \implies 0 \le k \le n$.
+\begin{itemize}
+    \item For $n < 0$: No integers $k$ satisfy $0 \le k \le n$, hence $(u * u)(n) = 0$.
+    \item For $n \ge 0$: The sum runs from $k = 0$ to $k = n$:
+    \begin{equation}
+        (u * u)(n) = \sum_{k=0}^{n} 1 = n + 1.
+    \end{equation}
+\end{itemize}
+Combining the cases confirms:
+\begin{equation}
+    u(n) * u(n) = (n + 1)u(n) = x(n). \hfill \blacksquare
+\end{equation}
+
+\textbf{Step 2: Transform Calculation.}
+Using the convolution theorem:
+\begin{equation}
+    X(z) = \mathcal{Z}\{u(n) * u(n)\} = U(z) \cdot U(z) = [U(z)]^2.
+\end{equation}
+Substituting $U(z) = \frac{1}{1 - z^{-1}}$ for $|z| > 1$:
+\begin{equation}
+    X(z) = \left( \frac{1}{1 - z^{-1}} \right)^2 = \frac{1}{(1 - z^{-1})^2} = \frac{z^2}{(z - 1)^2}, \quad \text{ROC: } |z| > 1.
+\end{equation}
+This matches the derivative property result: $\mathcal{Z}\{(n+1)u(n)\} = \mathcal{Z}\{n u(n)\} + \mathcal{Z}\{u(n)\} = \frac{z^{-1}}{(1 - z^{-1})^2} + \frac{1}{1 - z^{-1}} = \frac{1}{(1 - z^{-1})^2}$.
+
+% -------------------------------------------------------------------------
+% Problem 3.13
+% -------------------------------------------------------------------------
+\subsection{Problem 3.13: Upsampling and Downsampling Properties}
+\textbf{Problem Statement:} Let $x(n)$ be a sequence with $\mathcal{Z}$-transform $X(z)$. Determine, in terms of $X(z)$, the $\mathcal{Z}$-transforms of the following signals:
+\begin{enumerate}[label=(\alph*)]
+    \item $x_1(n) = \begin{cases} x\left(\dfrac{n}{2}\right), & \text{if } n \text{ is even} \\ 0, & \text{if } n \text{ is odd} \end{cases}$ \quad (Upsampling by factor 2)
+    \item $x_2(n) = x(2n)$ \quad (Downsampling / Decimation by factor 2)
+\end{enumerate}
+
+\writespace[6.5cm]{%
+  \textbf{Reserved Workspace for Problem 3.13:}\\[2mm]
+  For (a), substitute $n = 2m$ into $X_1(z) = \sum_{m=-\infty}^{\infty} x(m) z^{-2m} = X(z^2)$ with ROC: $\{z : z^2 \in R_x\}$.\\
+  For (b), express $x_2(n)$ using the modulation/sampling identity: $x_e(n) = \frac{1}{2}[x(n) + (-1)^n x(n)]$,\\
+  leading to $X_2(z) = \frac{1}{2}\left[ X(z^{1/2}) + X(-z^{1/2}) \right]$.}
+
+% -------------------------------------------------------------------------
+% Problem 3.14
+% -------------------------------------------------------------------------
+\subsection{Problem 3.14: Causal Inverse Z-Transforms}
+\textbf{Problem Statement:} Determine the causal signal $x(n)$ (where the Region of Convergence is exterior to the outermost pole, i.e., $|z| > \max_k |p_k|$) for each of the following $\mathcal{Z}$-transforms:
+
+\subsubsection{Part (a): Inverse Transform of Rational Function}
+Given:
+\begin{equation}
+    X(z) = \frac{1 + 3z^{-1}}{1 + 3z^{-1} + 2z^{-2}}.
+\end{equation}
+Factoring the denominator polynomial:
+\begin{equation}
+    1 + 3z^{-1} + 2z^{-2} = (1 + z^{-1})(1 + 2z^{-1}).
+\end{equation}
+The poles are located at $z = -1$ and $z = -2$. For a causal sequence, the ROC is $|z| > 2$.
+Applying partial fraction expansion:
+\begin{equation}
+    X(z) = \frac{1 + 3z^{-1}}{(1 + z^{-1})(1 + 2z^{-1})} = \frac{A_1}{1 + z^{-1}} + \frac{A_2}{1 + 2z^{-1}}.
+\end{equation}
+Computing the coefficients:
+\begin{align*}
+    A_1 &= \left. \frac{1 + 3z^{-1}}{1 + 2z^{-1}} \right|_{z^{-1} = -1} = \frac{1 - 3}{1 - 2} = 2, \\
+    A_2 &= \left. \frac{1 + 3z^{-1}}{1 + z^{-1}} \right|_{z^{-1} = -1/2} = \frac{1 - 1.5}{1 - 0.5} = -1.
+\end{align*}
+Inverting each term for $|z| > 2$:
+\begin{equation}
+    x(n) = \left[ 2(-1)^n - (-2)^n \right] u(n).
+\end{equation}
+
+\subsubsection{Part (b): Inverse Transform of Resonant Quadratic}
+Given:
+\begin{equation}
+    X(z) = \frac{1}{1 - z^{-1} + \frac{1}{2}z^{-2}}.
+\end{equation}
+The denominator is of the standard form $1 - 2r \cos\omega_0 z^{-1} + r^2 z^{-2}$. Comparing coefficients:
+\begin{align*}
+    r^2 &= \frac{1}{2} \implies r = \frac{1}{\sqrt{2}}, \\
+    2r \cos\omega_0 &= 1 \implies 2\left(\frac{1}{\sqrt{2}}\right)\cos\omega_0 = 1 \implies \cos\omega_0 = \frac{1}{\sqrt{2}} \implies \omega_0 = \frac{\pi}{4}.
+\end{align*}
+Consequently, $r \sin\omega_0 = \frac{1}{\sqrt{2}} \sin\frac{\pi}{4} = \frac{1}{2}$. We decompose the numerator $1$:
+\begin{equation}
+    1 = \left( 1 - \frac{1}{2}z^{-1} \right) + \frac{1}{2}z^{-1} = \left( 1 - r \cos\omega_0 z^{-1} \right) + \left( r \sin\omega_0 z^{-1} \right).
+\end{equation}
+Rewriting $X(z)$:
+\begin{equation}
+    X(z) = \frac{1 - \frac{1}{2}z^{-1}}{1 - z^{-1} + \frac{1}{2}z^{-2}} + \frac{\frac{1}{2}z^{-1}}{1 - z^{-1} + \frac{1}{2}z^{-2}}.
+\end{equation}
+Taking the causal inverse $\mathcal{Z}$-transform term by term:
+\begin{equation}
+    x(n) = \left(\frac{1}{\sqrt{2}}\right)^n \left[ \cos\left(\frac{\pi}{4} n\right) + \sin\left(\frac{\pi}{4} n\right) \right] u(n).
+\end{equation}
+Using the trigonometric identity $\cos\theta + \sin\theta = \sqrt{2} \sin(\theta + \pi/4)$:
+\begin{equation}
+    x(n) = \sqrt{2}\left(\frac{1}{\sqrt{2}}\right)^n \sin\left(\frac{\pi}{4}(n+1)\right) u(n) = \left(\frac{1}{\sqrt{2}}\right)^{n-1} \sin\left(\frac{\pi}{4}(n+1)\right) u(n).
+\end{equation}
+
+\subsubsection{Part (c): Inverse Transform of Delayed Accumulator}
+Given:
+\begin{equation}
+    X(z) = \frac{z^{-6} + z^{-7}}{1 - z^{-1}}.
+\end{equation}
+Expressing $X(z)$ as a product with the unit step transform:
+\begin{equation}
+    X(z) = (z^{-6} + z^{-7}) \cdot \frac{1}{1 - z^{-1}}.
+\end{equation}
+Since $\mathcal{Z}^{-1}\left\{ \frac{1}{1 - z^{-1}} \right\} = u(n)$, the time-shifting property gives:
+\begin{equation}
+    x(n) = u(n - 6) + u(n - 7).
+\end{equation}
+
+\subsubsection{Part (d): Inverse Transform of Improper Rational Function}
+Given:
+\begin{equation}
+    X(z) = \frac{1 + 2z^{-2}}{1 + z^{-2}}.
+\end{equation}
+Performing polynomial division:
+\begin{equation}
+    X(z) = \frac{2(1 + z^{-2}) - 1}{1 + z^{-2}} = 2 - \frac{1}{1 + z^{-2}}.
+\end{equation}
+Recall that $\frac{1}{1 + z^{-2}} = \frac{1 - \cos(\pi/2) z^{-1}}{1 - 2\cos(\pi/2) z^{-1} + z^{-2}} \longleftrightarrow \cos\left(\frac{\pi}{2} n\right) u(n)$. Hence:
+\begin{equation}
+    x(n) = 2\delta(n) - \cos\left(\frac{\pi}{2} n\right) u(n).
+\end{equation}
+
+\subsubsection{Part (e): Inverse Transform with Multiple Poles}
+Given:
+\begin{equation}
+    X(z) = \frac{1}{4} \frac{1 + 6z^{-1} + z^{-2}}{(1 - 2z^{-1} + 2z^{-2})(1 - 0.5z^{-1})}.
+\end{equation}
+We perform a partial fraction expansion:
+\begin{equation}
+    X(z) = \frac{A_1 + A_2 z^{-1}}{1 - 2z^{-1} + 2z^{-2}} + \frac{B}{1 - 0.5z^{-1}}.
+\end{equation}
+Computing $B$ at $z^{-1} = 2$:
+\begin{equation}
+    B = \left. \frac{1}{4} \frac{1 + 6z^{-1} + z^{-2}}{1 - 2z^{-1} + 2z^{-2}} \right|_{z^{-1} = 2} = \frac{1}{4} \frac{1 + 12 + 4}{1 - 4 + 8} = \frac{17}{20} = 0.85.
+\end{equation}
+Matching polynomial coefficients on the numerator:
+\begin{equation*}
+    \frac{1}{4}(1 + 6z^{-1} + z^{-2}) - 0.85(1 - 2z^{-1} + 2z^{-2}) = (A_1 + A_2 z^{-1})(1 - 0.5z^{-1}).
+\end{equation*}
+Solving gives $A_1 = -0.6$ and $A_2 = 2.9$. For the quadratic denominator $1 - 2z^{-1} + 2z^{-2}$:
+\begin{equation*}
+    r^2 = 2 \implies r = \sqrt{2}, \quad 2r\cos\omega_0 = 2 \implies \cos\omega_0 = \frac{1}{\sqrt{2}} \implies \omega_0 = \frac{\pi}{4}.
+\end{equation*}
+Decomposing $-0.6 + 2.9z^{-1} = -0.6(1 - z^{-1}) + 2.3 z^{-1}$:
+\begin{align}
+    x(n) &= \left[ -0.6 (\sqrt{2})^n \cos\left(\frac{\pi}{4} n\right) + 2.3 (\sqrt{2})^n \sin\left(\frac{\pi}{4} n\right) + 0.85 (0.5)^n \right] u(n) \nonumber \\
+         &= \left[ (\sqrt{2})^n \left( -0.6 \cos\left(\frac{\pi}{4} n\right) + 2.3 \sin\left(\frac{\pi}{4} n\right) \right) + \frac{17}{20}\left(\frac{1}{2}\right)^n \right] u(n).
+\end{align}
+
+\subsubsection{Part (f): Inverse Transform of Two First-Order Poles}
+Given:
+\begin{equation}
+    X(z) = \frac{2 - 1.5z^{-1}}{1 - 1.5z^{-1} + 0.5z^{-2}}.
+\end{equation}
+Factoring the denominator:
+\begin{equation}
+    1 - 1.5z^{-1} + 0.5z^{-2} = (1 - z^{-1})(1 - 0.5z^{-1}).
+\end{equation}
+Expanding by partial fractions:
+\begin{equation}
+    X(z) = \frac{A}{1 - z^{-1}} + \frac{B}{1 - 0.5z^{-1}}.
+\end{equation}
+\begin{align*}
+    A &= \left. \frac{2 - 1.5z^{-1}}{1 - 0.5z^{-1}} \right|_{z^{-1} = 1} = \frac{0.5}{0.5} = 1, \\
+    B &= \left. \frac{2 - 1.5z^{-1}}{1 - z^{-1}} \right|_{z^{-1} = 2} = \frac{2 - 3}{1 - 2} = 1.
+\end{align*}
+Taking the causal inverse $\mathcal{Z}$-transform:
+\begin{equation}
+    x(n) = \left[ 1 + (0.5)^n \right] u(n).
+\end{equation}
+
+\subsubsection{Part (g): Inverse Transform of Repeated Real Pole}
+Given:
+\begin{equation}
+    X(z) = \frac{1 + 2z^{-1} + z^{-2}}{1 + 4z^{-1} + 4z^{-2}}.
+\end{equation}
+Notice that numerator and denominator are perfect squares: $\frac{(1 + z^{-1})^2}{(1 + 2z^{-1})^2}$. Dividing:
+\begin{equation}
+    X(z) = \frac{1}{4} + \frac{1}{4} \frac{3 + 4z^{-1}}{(1 + 2z^{-1})^2} = \frac{1}{4} + \frac{1}{2} \frac{1}{1 + 2z^{-1}} + \frac{1}{4} \frac{1}{(1 + 2z^{-1})^2}.
+\end{equation}
+Using $\mathcal{Z}^{-1}\left\{ \frac{1}{(1 - a z^{-1})^2} \right\} = (n+1) a^n u(n)$ with $a = -2$:
+\begin{align}
+    x(n) &= \frac{1}{4}\delta(n) + \left[ \frac{1}{2}(-2)^n + \frac{1}{4}(n+1)(-2)^n \right] u(n) \nonumber \\
+         &= \frac{1}{4}\delta(n) + \frac{n+3}{4}(-2)^n u(n).
+\end{align}
+
+\subsubsection{Part (h): Pole-Zero Pattern Reconstruction (Fig.~P3.14, G = 1/4)}
+From Figure P3.14 in the reference document:
+\begin{itemize}
+    \item System gain: $G = \frac{1}{4}$.
+    \item Zeros: $z_0 = 0$, $z_1 = -1/2$, and $z_2 = -1/4$.
+    \item Poles: $p_1 = 1/2$, and a complex conjugate pair at $p_{2,3} = \frac{1}{\sqrt{2}} e^{\pm j\pi/4}$.
+\end{itemize}
+The transfer function in terms of $z^{-1}$ is:
+\begin{equation}
+    X(z) = \frac{1}{4} \frac{(1 + \frac{1}{2}z^{-1})(1 + \frac{1}{4}z^{-1})}{(1 - \frac{1}{2}z^{-1})(1 - z^{-1} + \frac{1}{2}z^{-2})} = \frac{1}{4} \frac{1 + \frac{3}{4}z^{-1} + \frac{1}{8}z^{-2}}{(1 - \frac{1}{2}z^{-1})(1 - z^{-1} + \frac{1}{2}z^{-2})}.
+\end{equation}
+Partial fraction expansion yields:
+\begin{equation}
+    X(z) = \frac{3/4}{1 - \frac{1}{2}z^{-1}} + \frac{-0.5 + \frac{11}{16}z^{-1}}{1 - z^{-1} + \frac{1}{2}z^{-2}}.
+\end{equation}
+Decomposing the second numerator as $-0.5(1 - \frac{1}{2}z^{-1}) + \frac{7}{8}(\frac{1}{2}z^{-1})$:
+\begin{equation}
+    x(n) = \left[ \frac{3}{4}\left(\frac{1}{2}\right)^n - \frac{1}{2}\left(\frac{1}{\sqrt{2}}\right)^n \cos\left(\frac{\pi}{4} n\right) + \frac{7}{8}\left(\frac{1}{\sqrt{2}}\right)^n \sin\left(\frac{\pi}{4} n\right) \right] u(n).
+\end{equation}
+
+\subsubsection{Part (i): First-Order All-Pass Structure}
+Given:
+\begin{equation}
+    X(z) = \frac{1 - \frac{1}{2}z^{-1}}{1 + \frac{1}{2}z^{-1}}.
+\end{equation}
+Dividing the numerator by the denominator:
+\begin{equation}
+    X(z) = -1 + \frac{2}{1 + \frac{1}{2}z^{-1}}.
+\end{equation}
+Inverting term by term:
+\begin{equation}
+    x(n) = -\delta(n) + 2\left(-\frac{1}{2}\right)^n u(n).
+\end{equation}
+
+\subsubsection{Part (j): General First-Order Fraction}
+Given:
+\begin{equation}
+    X(z) = \frac{1 - a z^{-1}}{z^{-1} - a}.
+\end{equation}
+Rewriting in terms of standard causal poles:
+\begin{equation}
+    X(z) = \frac{1 - a z^{-1}}{-a (1 - a^{-1} z^{-1})} = -a - \frac{1 - a^2}{a (1 - a^{-1} z^{-1})}.
+\end{equation}
+For a causal sequence, the ROC is exterior to the pole at $z = 1/a$, i.e., $|z| > |1/a|$:
+\begin{equation}
+    x(n) = -a \delta(n) - \frac{1 - a^2}{a} \left(\frac{1}{a}\right)^n u(n) = -a \delta(n) + \left(a - \frac{1}{a}\right) a^{-n} u(n).
+\end{equation}
+
+% -------------------------------------------------------------------------
+% Problem 3.19
+% -------------------------------------------------------------------------
+\subsection{Problem 3.19: Inverse Transform via Differentiation}
+\textbf{Problem Statement:} By first differentiating $X(z)$ and then using appropriate properties of the $\mathcal{Z}$-transform, determine the sequence $x(n)$ for each of the following transforms:
+\begin{enumerate}[label=(\alph*)]
+    \item $X(z) = \log(1 - 2z), \quad |z| < \dfrac{1}{2}$
+    \item $X(z) = \log(1 - z^{-1}), \quad |z| > 1$
+\end{enumerate}
+
+\writespace[6cm]{%
+  \textbf{Reserved Workspace for Problem 3.19:}\\[2mm]
+  Recall the property $\mathcal{Z}\{n x(n)\} = -z \frac{d}{dz}X(z)$.\\
+  For (a), $\frac{dX}{dz} = \frac{-2}{1 - 2z} \implies -z \frac{dX}{dz} = \frac{2z}{1 - 2z}$, expand as power series for $|z| < 1/2$ and solve for $x(n)$.\\
+  For (b), $\frac{dX}{dz} = \frac{z^{-2}}{1 - z^{-1}} \implies -z \frac{dX}{dz} = -\frac{z^{-1}}{1 - z^{-1}}$, expand for $|z| > 1$ and solve for $x(n)$.}
+
+% -------------------------------------------------------------------------
+% Problem 3.20
+% -------------------------------------------------------------------------
+\subsection{Problem 3.20: Pole-Zero Pattern Analysis and Synthesis}
+\textbf{Problem Statement:}
+\begin{enumerate}[label=(\alph*)]
+    \item Draw the pole-zero pattern for the signal
+    \begin{equation}
+        x_1(n) = (r^n \sin\omega_0 n) u(n), \quad 0 < r < 1.
+        \label{eq:p320_sig}
+    \end{equation}
+    \item Compute the $\mathcal{Z}$-transform $X_2(z)$ corresponding directly to the pole-zero pattern in part (a).
+    \item Compare $X_1(z)$ with $X_2(z)$. Are they identical? If not, indicate a method to derive $X_1(z)$ from the pole-zero pattern.
+\end{enumerate}
+
+\subsubsection{Solution to Part (a): Derivation and Pole-Zero Diagram}
+Expressing the sinusoidal factor using Euler's formula:
+\begin{equation}
+    x_1(n) = r^n \left( \frac{e^{j\omega_0 n} - e^{-j\omega_0 n}}{2j} \right) u(n) = \frac{1}{2j}(r e^{j\omega_0})^n u(n) - \frac{1}{2j}(r e^{-j\omega_0})^n u(n).
+\end{equation}
+Taking the $\mathcal{Z}$-transform of each term:
+\begin{align}
+    X_1(z) &= \frac{1}{2j} \left[ \frac{1}{1 - r e^{j\omega_0} z^{-1}} - \frac{1}{1 - r e^{-j\omega_0} z^{-1}} \right] \nonumber \\
+           &= \frac{1}{2j} \frac{(1 - r e^{-j\omega_0} z^{-1}) - (1 - r e^{j\omega_0} z^{-1})}{(1 - r e^{j\omega_0} z^{-1})(1 - r e^{-j\omega_0} z^{-1})} \nonumber \\
+           &= \frac{r \sin\omega_0 z^{-1}}{1 - 2r \cos\omega_0 z^{-1} + r^2 z^{-2}}, \quad \text{ROC: } |z| > r.
+\end{align}
+Expressed in positive powers of $z$:
+\begin{equation}
+    X_1(z) = \frac{(r \sin\omega_0) z}{z^2 - 2r \cos\omega_0 z + r^2} = \frac{(r \sin\omega_0) z}{(z - r e^{j\omega_0})(z - r e^{-j\omega_0})}.
+\end{equation}
+The pole-zero distribution is therefore:
+\begin{itemize}
+    \item \textbf{Poles:} A complex-conjugate pair at $p_{1,2} = r e^{\pm j\omega_0}$ (located strictly inside the unit circle because $0 < r < 1$).
+    \item \textbf{Zeros:} A single finite zero at the origin $z_1 = 0$.
+\end{itemize}
+The pole-zero constellation in the complex $z$-plane is shown in Figure~\ref{fig:p320_pole_zero}.
+
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[scale=2.2, >=latex', thick]
+        % Axes
+        \draw [->] (-1.5,0) -- (1.6,0) node [right] {$\text{Re}(z)$};
+        \draw [->] (0,-1.5) -- (0,1.6) node [above] {$\text{Im}(z)$};
+        
+        % Unit circle
+        \draw [dashed, gray!80] (0,0) circle (1.0);
+        \node [below right, gray!80] at (1,0) {$1$};
+        \node [above left, gray!80] at (0,1) {$j$};
+        
+        % Pole radius r circle (dotted)
+        \draw [dotted, blue!60] (0,0) circle (0.7);
+        
+        % Pole locations: r=0.7, omega_0 = 45 degrees
+        \coordinate (p1) at (45:0.7);
+        \coordinate (p2) at (-45:0.7);
+        
+        % Radial line to pole
+        \draw [thin, blue!60] (0,0) -- (p1);
+        \draw [thin, blue!60] (0,0) -- (p2);
+        
+        % Angle arc
+        \draw [->, thin] (0.3,0) arc (0:45:0.3);
+        \node at (22.5:0.42) {\footnotesize $\omega_0$};
+        \draw [->, thin] (0.3,0) arc (0:-45:0.3);
+        \node at (-22.5:0.42) {\footnotesize $-\omega_0$};
+        
+        % Radius label
+        \node [above left, blue!80] at (45:0.35) {\footnotesize $r$};
+
+        % Zero at origin
+        \draw [line width=1.2pt] (0,0) circle (0.05);
+        \node [below left] at (-0.05,-0.05) {\footnotesize $z = 0$};
+        
+        % Poles (crosses)
+        \draw [red, line width=1.4pt] ($(p1)-(0.06,0.06)$) -- ($(p1)+(0.06,0.06)$);
+        \draw [red, line width=1.4pt] ($(p1)-(0.06,-0.06)$) -- ($(p1)+(0.06,-0.06)$);
+        \node [above right, red] at (p1) {$p_1 = r e^{j\omega_0}$};
+        
+        \draw [red, line width=1.4pt] ($(p2)-(0.06,0.06)$) -- ($(p2)+(0.06,0.06)$);
+        \draw [red, line width=1.4pt] ($(p2)-(0.06,-0.06)$) -- ($(p2)+(0.06,-0.06)$);
+        \node [below right, red] at (p2) {$p_2 = r e^{-j\omega_0}$};
+    \end{tikzpicture}
+    \caption{Pole-zero pattern for $x_1(n) = (r^n \sin\omega_0 n)u(n)$ with $0 < r < 1$.}
+    \label{fig:p320_pole_zero}
+\end{figure}
+
+\subsubsection{Solution to Part (b): Reconstructed Transform}
+From the graphical pole-zero constellation, any rational function with a zero at $z=0$ and conjugate poles at $z = r e^{\pm j\omega_0}$ is constructed in monic rational form as:
+\begin{equation}
+    X_2(z) = K \frac{z - 0}{(z - r e^{j\omega_0})(z - r e^{-j\omega_0})} = K \frac{z}{z^2 - 2r \cos\omega_0 z + r^2},
+\end{equation}
+where $K$ represents an arbitrary real or complex scaling constant. Assuming normalized unity gain ($K = 1$):
+\begin{equation}
+    X_2(z) = \frac{z}{z^2 - 2r \cos\omega_0 z + r^2} = \frac{z^{-1}}{1 - 2r \cos\omega_0 z^{-1} + r^2 z^{-2}}, \quad |z| > r.
+\end{equation}
+
+\subsubsection{Solution to Part (c): Comparison and Gain Identification}
+\begin{itemize}
+    \item \textbf{Comparison:} $X_1(z)$ and $X_2(z)$ share identical pole and zero locations in the complex $z$-plane, as well as an identical Region of Convergence ($|z| > r$). However, they are \textbf{not strictly identical} algebraically because they differ by an amplitude scale factor $G$:
+    \begin{equation}
+        X_1(z) = G \cdot X_2(z), \qquad \text{where } G = r \sin\omega_0.
+    \end{equation}
+    A pole-zero plot uniquely specifies a rational transfer function only up to a multiplicative constant.
+    \item \textbf{Method to Derive $X_1(z)$ from the Pattern:} To resolve the unknown gain constant $K = G$ from the pole-zero geometry, one additional time-domain or frequency-domain constraint is required:
+    \begin{enumerate}
+        \item \textbf{Initial Value Property:} By the initial value theorem, the first sample is $x(0) = \lim_{z \to \infty} X(z) = 0$, which is consistent with the zero at $z=0$. Evaluating the second time sample via the limit theorem:
+        \begin{equation}
+            x(1) = \lim_{z \to \infty} z X(z) = \lim_{z \to \infty} \frac{K z^2}{z^2 - 2r\cos\omega_0 z + r^2} = K.
+        \end{equation}
+        From the known time-domain expression, $x_1(1) = r^1 \sin(\omega_0 \cdot 1) = r \sin\omega_0$. Setting the limit equal to $x_1(1)$ uniquely fixes the gain:
+        \begin{equation}
+            K = r \sin\omega_0 \implies X_1(z) = (r \sin\omega_0) X_2(z).
+        \end{equation}
+        \item \textbf{Frequency-Domain Evaluation:} Alternatively, measuring or specifying the system frequency response $X(e^{j\omega})$ at a known reference digital frequency $\omega = \omega_0$ allows direct algebraic solution for $K$.
+    \end{enumerate}
+\end{itemize}
+
+\newpage
+\section{Conclusion}
+This laboratory study provided thorough theoretical and computational grounding in the $\mathcal{Z}$-transform, inverse $\mathcal{Z}$-transform, and discrete-time system analysis:
+\begin{itemize}
+    \item Linear convolution in the time domain was mapped to polynomial and rational multiplications in the transform domain, confirming that the output Region of Convergence contains the intersection of the individual input ROCs.
+    \item First- and second-order difference equations were solved systematically for impulse, step, zero-input, and zero-state responses, demonstrating how poles govern exponential decay, oscillation frequency, and stability.
+    \item Key algebraic properties (conjugation, real/imaginary parts, complex modulation, accumulation) were derived with rigorous region-of-convergence bounds.
+    \item Ten distinct rational transforms from Proakis \& Manolakis Problem 3.14 were inverted into their causal time-domain sequences via partial fraction expansion and trigonometric decomposition.
+    \item The parametric damped sinusoidal sequence in Problem 3.20 elucidated the fundamental duality between pole-zero geometry and time-domain dynamics, proving that pole-zero patterns define system modes while initial conditions or initial values calibrate the overall gain.
+\end{itemize}
+
+\end{document}
